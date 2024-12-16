@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data && data.studentInfo) {
                 const studentId = data.studentInfo.studentID;
 
-                // Linkleri dinamik olarak ayarla
                 document.getElementById('updateProfileLink').href = `/students/updateProfile/${studentId}`;
                 document.getElementById('viewTranscriptLink').href = `/students/transcript/${studentId}`;
                 document.getElementById('selectCoursesLink').href = `/students/courses/${studentId}`;
@@ -43,26 +42,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Ders listesini doldur
                 fetch(`/api/Student/courses/${studentId}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Ders listesi alınamadı.");
+                        }
+                        return response.json();
+                    })
                     .then(courses => {
-                        const coursesTable = document.getElementById('coursesTable').getElementsByTagName('tbody')[0];
-                        courses.forEach(course => {
-                            const row = coursesTable.insertRow();
-                            row.innerHTML = `
-                                        <td>${course.code}</td>
-                                        <td>${course.name}</td>
-                                        <td>${course.credits}</td>
-                                        <td><input type="checkbox" name="selectedCourses" value="${course.id}"></td>
-                                    `;
-                        });
-                    });
+                        console.log("Ders Listesi:", courses); // Gelen veriyi kontrol et
 
-                // Ders seçme formu gönderme
+                        const coursesTableBody = document.querySelector('#coursesTable tbody');
+                        if (!coursesTableBody) {
+                            console.error("Tablonun tbody kısmı bulunamadı.");
+                            return;
+                        }
+
+                        courses.forEach(course => {
+                            const row = coursesTableBody.insertRow();
+                            row.innerHTML = `
+                                <td>${course.courseCode || 'Kod Yok'}</td>
+                                <td>${course.courseName}</td>
+                                <td>${course.credit}</td>
+                                <td>${course.isMandatory ? 'Zorunlu' : 'Seçmeli'}</td>
+                                <td><input type="checkbox" name="selectedCourses" value="${course.id}"></td>
+                            `;
+                        });
+                    })
+                    .catch(error => console.error('Ders listesi yüklenirken hata oluştu:', error));
+
+                // Ders seçme formunu işleme
                 document.getElementById('courseSelectionForm').addEventListener('submit', function (event) {
                     event.preventDefault();
+
+                    // Seçilen derslerin ID'lerini topla
                     const selectedCourses = Array.from(document.querySelectorAll('input[name="selectedCourses"]:checked'))
                         .map(input => input.value);
 
+                    if (selectedCourses.length === 0) {
+                        alert("Lütfen en az bir ders seçin.");
+                        return;
+                    }
+
+                    // Ders seçimlerini API'ye gönder
                     fetch(`/api/Student/selectCourses/${studentId}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -74,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                             return response.json();
                         })
-                        .then(() => alert('Dersler başarıyla seçildi!'))
+                        .then(() => alert('Dersler başarıyla kaydedildi!'))
                         .catch(error => {
                             console.error('Ders seçimi sırasında hata oluştu:', error);
                             alert('Ders seçimi sırasında bir hata oluştu.');

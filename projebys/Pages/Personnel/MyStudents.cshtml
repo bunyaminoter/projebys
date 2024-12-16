@@ -1,4 +1,4 @@
-﻿@page "/personnel/mystudents/${advisorId}"
+﻿@page "/personnel/mystudents/{advisorId:int}"
 @model projebys.Pages.Personnel.MyStudentsModel
 
 <!DOCTYPE html>
@@ -19,19 +19,19 @@
         <div id="menu">
             <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
             <div id="personnelMenu" class="sub-menu">
-                <span><a href="/Personnel/Profile">Profil Güncelle</a></span>
+                <span><a href="#" id="profileUpdateLink">Profil Güncelle</a></span>
             </div>
 
             <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Danışman İşlemleri</span>
             <div id="studentMenu" class="sub-menu">
-                <span><a href="/Personnel/MyStudents">Öğrencilerim</a></span>
+                <span><a href="#" id="myStudentsLink">Öğrencilerim</a></span>
             </div>
 
             <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
             <div id="courseMenu" class="sub-menu">
-                <span><a href="/Personnel/Courses/Add">Ders Ekle</a></span>
-                <span><a href="/Personnel/Courses/Update">Ders Güncelle</a></span>
-                <span><a href="/Personnel/Courses/Delete">Ders Sil</a></span>
+                <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
+                <span><a href="#" id="updateCourseLink">Ders Güncelle</a></span>
+                <span><a href="#" id="deleteCourseLink">Ders Sil</a></span>
             </div>
         </div>
     </div>
@@ -54,55 +54,100 @@
                 <!-- Öğrenci bilgileri burada listelenecek -->
             </tbody>
         </table>
+
+        <p id="noStudentsMessage" style="display: none;">Henüz danışmanlık yaptığınız bir öğrenci bulunmamaktadır.</p>
     </div>
 
     <script>
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
-            // Danışmanın öğrencilerini yükle
-            fetch('/api/Advisors/GetMyStudents', {
+            // Danışman bilgilerini yükle
+            fetch('/api/Advisors/getAdvisorInfo', {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error("Danışman bilgileri alınamadı.");
+                return response.json();
+            })
             .then(data => {
-                if (data && data.students) {
-                    const studentsTable = document.getElementById('studentsTable').getElementsByTagName('tbody')[0];
+                if (data && data.advisorInfo) {
+                    const advisorId = data.advisorInfo.advisorID;
 
-                    data.students.forEach(student => {
-                        const row = document.createElement('tr');
+                    // Dinamik bağlantıları ayarla
+                    document.getElementById('profileUpdateLink').href = `/personnel/profile/${advisorId}`;
+                    document.getElementById('myStudentsLink').href = `/personnel/mystudents/${advisorId}`;
+                    document.getElementById('addCourseLink').href = `/personnel/courses/add/${advisorId}`;
+                    document.getElementById('updateCourseLink').href = `/personnel/courses/update/${advisorId}`;
+                    document.getElementById('deleteCourseLink').href = `/personnel/courses/delete/${advisorId}`;
 
-                        const studentName = document.createElement('td');
-                        studentName.textContent = student.fullName;
-                        row.appendChild(studentName);
-
-                        const studentNumber = document.createElement('td');
-                        studentNumber.textContent = student.studentNumber;
-                        row.appendChild(studentNumber);
-
-                        const department = document.createElement('td');
-                        department.textContent = student.department || 'Bölüm Bilgisi Bulunamadı';
-                        row.appendChild(department);
-
-                        const email = document.createElement('td');
-                        email.textContent = student.email;
-                        row.appendChild(email);
-
-                        const actions = document.createElement('td');
-                        actions.innerHTML = `<a href="/Student/Profile/${student.studentID}" class="btn">Profili Görüntüle</a>`;
-                        row.appendChild(actions);
-
-                        studentsTable.appendChild(row);
-                    });
+                    // Öğrenci listesini yükle
+                    loadStudents(advisorId);
                 } else {
-                    alert("Öğrenciler yüklenirken bir hata oluştu.");
+                    alert("Danışman bilgileri eksik.");
                 }
             })
             .catch(error => {
                 console.error("Hata:", error);
-                alert("Öğrenciler yüklenirken bir hata oluştu.");
+                alert("Kullanıcı bilgileri yüklenirken bir hata oluştu.");
+                window.location.href = '/Login/Loginuser';
             });
+
+            function loadStudents(advisorId) {
+                fetch(`/api/Advisors/GetMyStudents/${advisorId}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const studentsTable = document.getElementById('studentsTable').getElementsByTagName('tbody')[0];
+                    const noStudentsMessage = document.getElementById('noStudentsMessage');
+
+                    if (data && data.students && data.students.length > 0) {
+                        data.students.forEach(student => {
+                            const row = createStudentRow(student);
+                            studentsTable.appendChild(row);
+                        });
+                        noStudentsMessage.style.display = 'none';
+                    } else {
+                        noStudentsMessage.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error("Hata:", error);
+                    //alert("Öğrenciler yüklenirken bir hata oluştu.");
+                });
+            }
+
+            function createStudentRow(student) {
+                const row = document.createElement('tr');
+
+                const studentName = document.createElement('td');
+                studentName.textContent = student.fullName;
+                row.appendChild(studentName);
+
+                const studentNumber = document.createElement('td');
+                studentNumber.textContent = student.studentNumber;
+                row.appendChild(studentNumber);
+
+                const department = document.createElement('td');
+                department.textContent = student.department || 'Bölüm Bilgisi Bulunamadı';
+                row.appendChild(department);
+
+                const email = document.createElement('td');
+                email.textContent = student.email;
+                row.appendChild(email);
+
+                const actions = document.createElement('td');
+                actions.innerHTML = `<a href="/Student/Profile/${student.studentID}" class="btn">Profili Görüntüle</a>`;
+                row.appendChild(actions);
+
+                return row;
+            }
         });
     </script>
 </body>

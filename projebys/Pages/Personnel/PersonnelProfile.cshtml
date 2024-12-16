@@ -1,4 +1,150 @@
-﻿@page
+﻿@page "/personnel/profile/{advisorId:int}"
 @model projebys.Pages.Personnel.PersonnelProfileModel
-@{
-}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personel Profil</title>
+    <link rel="stylesheet" href="/css/PersonnelProfile.css">
+    <script src="/js/PersonnelProfile.js" defer></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="/img/ktu-logo.png" alt="Logo" class="logo">
+        </div>
+
+        <div id="menu">
+            <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
+            <div id="personnelMenu" class="sub-menu">
+                <span><a href="#" id="profileLink">Profil Görüntüle</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Danışman İşlemleri</span>
+            <div id="studentMenu" class="sub-menu">
+                <span><a href="#" id="myStudentsLink">Öğrencilerim</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
+            <div id="courseMenu" class="sub-menu">
+                <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
+                <span><a href="#" id="updateCourseLink">Ders Güncelle</a></span>
+                <span><a href="#" id="deleteCourseLink">Ders Sil</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-container">
+        <h2>Profil Bilgilerim</h2>
+        <p>Profil bilgilerinizi görüntüleyebilir ve güncelleyebilirsiniz.</p>
+
+        <form id="profileForm">
+            <div class="form-group">
+                <label for="fullName">Ad Soyad:</label>
+                <input type="text" id="fullName" name="fullName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-posta:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="department">Bölüm:</label>
+                <input type="text" id="department" name="department" disabled>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Telefon:</label>
+                <input type="tel" id="phone" name="phone">
+            </div>
+
+            <button type="submit">Bilgileri Güncelle</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Danışman bilgilerini yükle
+            fetch('/api/Advisors/getAdvisorInfo', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Danışman bilgileri alınamadı.");
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.advisorInfo) {
+                    const advisorId = data.advisorInfo.advisorID;
+
+                    // Dinamik bağlantıları ayarla
+                    document.getElementById('profileLink').href = `/personnel/profile/${advisorId}`;
+                    document.getElementById('myStudentsLink').href = `/personnel/mystudents/${advisorId}`;
+                    document.getElementById('addCourseLink').href = `/personnel/courses/add/${advisorId}`;
+                    document.getElementById('updateCourseLink').href = `/personnel/courses/update/${advisorId}`;
+                    document.getElementById('deleteCourseLink').href = `/personnel/courses/delete/${advisorId}`;
+
+                    // Profil bilgilerini doldur
+                    populateProfileForm(data.advisorInfo);
+                } else {
+                    alert("Danışman bilgileri eksik.");
+                }
+            })
+            .catch(error => {
+                console.error("Hata:", error);
+                alert("Danışman bilgileri yüklenirken bir hata oluştu.");
+                window.location.href = '/Login/Loginuser';
+            });
+
+            // Profil formunu doldur
+            function populateProfileForm(profileData) {
+                document.getElementById('fullName').value = profileData.fullName || '';
+                document.getElementById('email').value = profileData.email || '';
+                document.getElementById('department').value = profileData.department || 'Bölüm Bilgisi Bulunamadı';
+                document.getElementById('phone').value = profileData.phone || '';
+            }
+
+            // Profil bilgilerini güncelle
+            const profileForm = document.getElementById('profileForm');
+            profileForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const updatedProfile = {
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value
+                };
+
+                fetch('/api/Advisors/UpdateProfile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedProfile)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Profil bilgileri başarıyla güncellendi!');
+                        window.location.reload();
+                    } else {
+                        alert('Profil güncelleme sırasında bir hata oluştu.');
+                    }
+                })
+                .catch(error => {
+                    console.error("Hata:", error);
+                    alert('Profil güncelleme işlemi sırasında bir hata oluştu.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

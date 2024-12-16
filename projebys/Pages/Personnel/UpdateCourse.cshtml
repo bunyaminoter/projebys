@@ -1,4 +1,161 @@
-﻿@page
+﻿@page "/personnel/courses/update/{advisorId:int}"
 @model projebys.Pages.Personnel.UpdateCourseModel
-@{
-}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ders Güncelle</title>
+    <link rel="stylesheet" href="/css/CourseUpdate.css">
+    <script src="/js/CourseUpdate.js" defer></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="/img/ktu-logo.png" alt="Logo" class="logo">
+        </div>
+
+        <div id="menu">
+            <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
+            <div id="personnelMenu" class="sub-menu">
+                <span><a href="/Personnel/Profile">Profil Güncelle</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Danışman İşlemleri</span>
+            <div id="studentMenu" class="sub-menu">
+                <span><a href="/Personnel/MyStudents">Öğrencilerim</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
+            <div id="courseMenu" class="sub-menu">
+                <span><a href="/Personnel/Courses/Add">Ders Ekle</a></span>
+                <span><a href="/Personnel/Courses/Update">Ders Güncelle</a></span>
+                <span><a href="/Personnel/Courses/Delete">Ders Sil</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="course-update-container">
+        <h2>Ders Güncelle</h2>
+        <p>Güncellemek istediğiniz dersi seçin ve yeni bilgileri girin:</p>
+
+        <form id="courseUpdateForm">
+            <div class="form-group">
+                <label for="courseSelect">Ders Seçin:</label>
+                <select id="courseSelect" name="courseId" required>
+                    <option value="">Ders Seçin</option>
+                    <!-- Ders listesi burada doldurulacak -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="courseName">Ders Adı:</label>
+                <input type="text" id="courseName" name="courseName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="courseCode">Ders Kodu:</label>
+                <input type="text" id="courseCode" name="courseCode" required>
+            </div>
+
+            <div class="form-group">
+                <label for="courseCredits">Kredi:</label>
+                <input type="number" id="courseCredits" name="courseCredits" min="0" required>
+            </div>
+
+            <button type="submit">Dersi Güncelle</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Dersleri yükle ve listele
+            fetch('/api/Courses/GetAllCourses', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.courses) {
+                    const courseSelect = document.getElementById('courseSelect');
+                    data.courses.forEach(course => {
+                        const option = document.createElement('option');
+                        option.value = course.courseId;
+                        option.textContent = `${course.courseCode} - ${course.courseName}`;
+                        courseSelect.appendChild(option);
+                    });
+
+                    // Ders seçildiğinde bilgileri formda göster
+                    courseSelect.addEventListener('change', function () {
+                        const selectedCourse = data.courses.find(c => c.courseId === this.value);
+                        if (selectedCourse) {
+                            document.getElementById('courseName').value = selectedCourse.courseName || '';
+                            document.getElementById('courseCode').value = selectedCourse.courseCode || '';
+                            document.getElementById('courseCredits').value = selectedCourse.credits || '';
+                        }
+                    });
+                } else {
+                    alert("Dersler yüklenirken bir hata oluştu.");
+                }
+            })
+            .catch(error => {
+                console.error("Hata:", error);
+                alert("Dersler yüklenirken bir hata oluştu.");
+            });
+
+            // Ders güncelleme işlemi
+            const courseUpdateForm = document.getElementById('courseUpdateForm');
+
+            courseUpdateForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const courseId = document.getElementById('courseSelect').value;
+                const courseName = document.getElementById('courseName').value;
+                const courseCode = document.getElementById('courseCode').value;
+                const courseCredits = document.getElementById('courseCredits').value;
+
+                if (!courseId || !courseName || !courseCode || !courseCredits) {
+                    alert("Lütfen tüm alanları doldurun.");
+                    return;
+                }
+
+                const updatedCourse = {
+                    courseId,
+                    courseName,
+                    courseCode,
+                    credits: parseInt(courseCredits, 10)
+                };
+
+                fetch('/api/Courses/Update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedCourse)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Ders başarıyla güncellendi!');
+                        window.location.href = '/Personnel/Courses'; // Derslerim sayfasına yönlendir
+                    } else {
+                        alert('Ders güncelleme sırasında bir hata oluştu.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    alert('Ders güncelleme işlemi sırasında bir hata oluştu.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

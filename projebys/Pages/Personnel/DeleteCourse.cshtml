@@ -1,4 +1,4 @@
-﻿@page "/personnel/courses/delete/${advisorId}"
+﻿@page "/personnel/courses/delete/{advisorId:int}"
 @model projebys.Pages.Personnel.DeleteCourseModel
 
 <!DOCTYPE html>
@@ -19,14 +19,15 @@
         <div id="menu">
             <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
             <div id="personnelMenu" class="sub-menu">
-                <span><a href="/Personnel/Profile">Profil Güncelle</a></span>
+                <span><a href="#" id="profileUpdateLink">Profil Güncelle</a></span>
             </div>
 
             <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
             <div id="courseMenu" class="sub-menu">
-                <span><a href="/Personnel/Courses">Derslerim</a></span>
-                <span><a href="/Personnel/Courses/Add">Ders Ekle</a></span>
-                <span><a href="/Personnel/Courses/Delete">Ders Sil</a></span>
+                <span><a href="#" id="myCoursesLink">Derslerim</a></span>
+                <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
+                <span><a href="#" id="updateCourseLink">Ders Güncelle</a></span>
+                <span><a href="#" id="deleteCourseLink">Ders Sil</a></span>
             </div>
         </div>
     </div>
@@ -34,12 +35,11 @@
     <div class="course-delete-container">
         <h2>Ders Sil</h2>
         <p>Aşağıdaki listeden silmek istediğiniz dersi seçebilirsiniz:</p>
-        <form id="courseDeleteForm" method="post" action="/api/Courses/Delete">
+        <form id="courseDeleteForm">
             <div class="form-group">
                 <label for="courseSelect">Ders Seçin:</label>
                 <select id="courseSelect" name="courseId" required>
                     <option value="">Ders Seçin</option>
-                    <!-- Ders listesi burada doldurulacak -->
                 </select>
             </div>
 
@@ -48,69 +48,100 @@
     </div>
 
     <script>
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
-            // Sayfa yüklendiğinde mevcut dersleri listele
-            fetch('/api/Courses/GetAllCourses', {
+            // Kullanıcı bilgilerini yükle
+            fetch('/api/Advisors/getAdvisorInfo', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error("Danışman bilgileri alınamadı.");
+                return response.json();
+            })
             .then(data => {
-                if (data && data.courses) {
-                    const courseSelect = document.getElementById('courseSelect');
-                    data.courses.forEach(course => {
-                        const option = document.createElement('option');
-                        option.value = course.courseId;
-                        option.textContent = `${course.courseCode} - ${course.courseName}`;
-                        courseSelect.appendChild(option);
+                if (data && data.advisorInfo) {
+                    const advisorId = data.advisorInfo.advisorID;
+
+                    // Linkleri dinamik olarak ayarla
+                    document.getElementById('profileUpdateLink').href = `/personnel/profile/${advisorId}`;
+                    document.getElementById('myCoursesLink').href = `/personnel/courses/${advisorId}`;
+                    document.getElementById('addCourseLink').href = `/personnel/courses/add/${advisorId}`;
+                     document.getElementById('updateCourseLink').href = `/personnel/courses/update/${advisorId}`;
+                    document.getElementById('deleteCourseLink').href = `/personnel/courses/delete/${advisorId}`;
+
+                    // Mevcut dersleri listele
+                    fetch(`/api/Courses/GetAllCourses/${advisorId}`, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.courses) {
+                            const courseSelect = document.getElementById('courseSelect');
+                            data.courses.forEach(course => {
+                                const option = document.createElement('option');
+                                option.value = course.courseId;
+                                option.textContent = `${course.courseCode} - ${course.courseName}`;
+                                courseSelect.appendChild(option);
+                            });
+                        } else {
+                            alert("Dersler yüklenirken bir hata oluştu.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Hata:", error);
+                        alert("Dersler yüklenirken bir hata oluştu.");
+                    });
+
+                    // Ders silme işlemi
+                    const courseDeleteForm = document.getElementById('courseDeleteForm');
+                    courseDeleteForm.addEventListener('submit', function (event) {
+                        event.preventDefault();
+
+                        const courseId = document.getElementById('courseSelect').value;
+
+                        if (!courseId) {
+                            alert("Lütfen bir ders seçin.");
+                            return;
+                        }
+
+                        const confirmation = confirm("Bu dersi silmek istediğinize emin misiniz?");
+                        if (confirmation) {
+                            fetch(`/api/Courses/Delete/${advisorId}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ courseId: courseId })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('Ders başarıyla silindi!');
+                                    location.reload(); // Sayfayı yenile
+                                } else {
+                                    alert('Ders silme sırasında bir hata oluştu.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Hata:', error);
+                                alert('Ders silme sırasında bir hata oluştu.');
+                            });
+                        }
                     });
                 } else {
-                    alert("Dersler yüklenirken bir hata oluştu.");
+                    alert("Danışman bilgileri eksik.");
                 }
             })
             .catch(error => {
                 console.error("Hata:", error);
-                alert("Dersler yüklenirken bir hata oluştu.");
-            });
-
-            // Ders silme işlemi
-            const courseDeleteForm = document.getElementById('courseDeleteForm');
-
-            courseDeleteForm.addEventListener('submit', function (event) {
-                event.preventDefault();
-
-                const courseId = document.getElementById('courseSelect').value;
-
-                if (!courseId) {
-                    alert("Lütfen bir ders seçin.");
-                    return;
-                }
-
-                const confirmation = confirm(`Ders ${courseId} silinecek. Emin misiniz?`);
-                if (confirmation) {
-                    fetch('/api/Courses/Delete', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ courseId: courseId })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Ders başarıyla silindi!');
-                            window.location.href = '/Personnel/Courses'; // Derslerim sayfasına yönlendir
-                        } else {
-                            alert('Ders silme sırasında bir hata oluştu.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Hata:', error);
-                        alert('Ders silme işlemi sırasında bir hata oluştu.');
-                    });
-                }
+                alert("Kullanıcı bilgileri yüklenirken bir hata oluştu.");
+                window.location.href = '/Login/Loginuser';
             });
         });
     </script>

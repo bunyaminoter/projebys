@@ -44,11 +44,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         courses.forEach(course => {
                             const row = myCoursesTable.insertRow();
                             row.innerHTML = `
-                                        <td>${course.code}</td>
-                                        <td>${course.name}</td>
-                                        <td>${course.credits}</td>
-                                    `;
+                           <td>${course.courseName}</td>
+                             <td>${course.credit}</td>
+                             <td>${course.isMandatory ? 'Zorunlu' : 'Seçmeli'}</td>
+    `;
                         });
+
                     })
                     .catch(error => console.error('Derslerim listesi yüklenirken hata oluştu:', error));
             } else {

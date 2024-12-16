@@ -1,4 +1,4 @@
-﻿@page "/personnel/courses/add/${advisorId}"
+﻿@page "/personnel/courses/add/{advisorId:int}"
 @model projebys.Pages.Personnel.CourseAddModel
 
 <!DOCTYPE html>
@@ -19,13 +19,15 @@
         <div id="menu">
             <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
             <div id="personnelMenu" class="sub-menu">
-                <span><a href="/Personnel/Profile">Profil Güncelle</a></span>
+                <span><a href="#" id="profileUpdateLink">Profil Güncelle</a></span>
             </div>
 
             <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
             <div id="courseMenu" class="sub-menu">
-                <span><a href="/Personnel/Courses">Derslerim</a></span>
-                <span><a href="/Personnel/Courses/Add">Ders Ekle</a></span>
+                <span><a href="#" id="myCoursesLink">Derslerim</a></span>
+                <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
+                <span><a href="#" id="updateCourseLink">Ders Güncelle</a></span>
+                <span><a href="#" id="deleteCourseLink">Ders Sil</a></span>
             </div>
         </div>
     </div>
@@ -33,7 +35,7 @@
     <div class="course-add-container">
         <h2>Ders Ekle</h2>
         <p>Aşağıdaki formu doldurarak yeni bir ders ekleyebilirsiniz:</p>
-        <form id="courseAddForm" method="post" action="/api/Courses/Add">
+        <form id="courseAddForm">
             <div class="form-group">
                 <label for="courseCode">Ders Kodu:</label>
                 <input type="text" id="courseCode" name="courseCode" required />
@@ -60,42 +62,96 @@
             <button type="submit">Ders Ekle</button>
         </form>
     </div>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const courseAddForm = document.getElementById('courseAddForm');
 
-            courseAddForm.addEventListener('submit', function (event) {
-                event.preventDefault(); // Formun varsayılan gönderilmesini engelle
+                function toggleSubMenu(menuId) {
+            // Seçilen alt menüyü bul
+            const menu = document.getElementById(menuId);
 
-                const formData = new FormData(courseAddForm);
-                const courseData = {};
-                formData.forEach((value, key) => {
-                    courseData[key] = value;
-                });
+            // Tüm alt menüleri kapat
+            document.querySelectorAll('.sub-menu').forEach(subMenu => {
+                if (subMenu !== menu) {
+                    subMenu.style.display = 'none';
+                }
+            });
 
-                fetch('/api/Courses/Add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(courseData)
+            // Seçilen alt menüyü aç/kapa
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+               document.addEventListener('DOMContentLoaded', function () {
+            // Kullanıcı bilgilerini yükle (örneğin advisorId için)
+            fetch('/api/Advisors/getAdvisorInfo', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Danışman bilgileri alınamadı.");
+                    }
+                    return response.json();
                 })
-                .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        alert('Ders başarıyla eklendi!');
-                        window.location.href = '/Personnel/Courses'; // Derslerim sayfasına yönlendir
+                    if (data && data.advisorInfo) {
+                        const advisorId = data.advisorInfo.advisorID;
+
+                        // Linkleri dinamik olarak ayarla
+                        document.getElementById('profileUpdateLink').href = `/personnel/profile/${advisorId}`;
+                        document.getElementById('myCoursesLink').href = `/personnel/courses/${advisorId}`;
+                        document.getElementById('addCourseLink').href = `/personnel/courses/add/${advisorId}`;
+                         document.getElementById('updateCourseLink').href = `/personnel/courses/update/${advisorId}`;
+                        document.getElementById('deleteCourseLink').href = `/personnel/courses/delete/${advisorId}`;
+
+                        // Ders ekleme formu işlemleri
+                        const courseAddForm = document.getElementById('courseAddForm');
+                        courseAddForm.addEventListener('submit', function (event) {
+                            event.preventDefault(); // Formun varsayılan gönderilmesini engelle
+
+                            const formData = new FormData(courseAddForm);
+                            const courseData = {};
+                            formData.forEach((value, key) => {
+                                courseData[key] = value;
+                            });
+
+                            // API'ye advisorId ile POST isteği gönder
+                            fetch(`/api/Courses/Add/${advisorId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(courseData)
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert('Ders başarıyla eklendi!');
+                                        window.location.href = `/personnel/courses/${advisorId}`; // Derslerim sayfasına yönlendir
+                                    } else {
+                                        alert('Ders ekleme sırasında bir hata oluştu!');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Hata:', error);
+                                    alert('Ders eklerken bir hata oluştu.');
+                                });
+                        });
                     } else {
-                        alert('Ders ekleme sırasında bir hata oluştu!');
+                        alert("Danışman bilgileri eksik.");
                     }
                 })
                 .catch(error => {
-                    console.error('Hata:', error);
-                    alert('Ders eklerken bir hata oluştu.');
+                    console.error("Hata:", error);
+                    alert("Kullanıcı bilgileri yüklenirken bir hata oluştu.");
+                    window.location.href = '/Login/Loginuser'; // Kullanıcı giriş ekranına yönlendirme
                 });
-            });
         });
     </script>
+
 </body>
 </html>
