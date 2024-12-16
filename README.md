@@ -1,0 +1,1 @@
+Projenin güncel hali
