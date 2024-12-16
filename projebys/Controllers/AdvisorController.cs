@@ -45,4 +45,35 @@ public class AdvisorsController : ControllerBase
         });
     }
 
+    // Danışmanın öğrencilerini getir
+    [HttpGet("GetMyStudents")]
+    public async Task<IActionResult> GetMyStudents()
+    {
+        var advisorId = HttpContext.Session.GetInt32("UserID"); // Oturumdaki danışman ID
+        if (advisorId == null)
+        {
+            return Unauthorized(new { message = "Kullanıcı giriş yapmamış." });
+        }
+
+        var students = await _context.Students
+            .Where(s => s.AdvisorID == advisorId) // Danışmana ait öğrenciler
+            .Select(s => new
+            {
+                s.StudentID,
+                FullName = $"{s.FirstName} {s.LastName}",
+                s.Department,
+                s.Email
+            })
+            .ToListAsync();
+
+        if (!students.Any())
+        {
+            return NotFound(new { message = "Danışmana ait öğrenci bulunamadı." });
+        }
+
+        return Ok(new { students });
+    }
+
+
+
 }
