@@ -1,0 +1,44 @@
+﻿@page
+@model projebys.Pages.Student.StudentDashboardModel
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Öğrenci Dashboard</title>
+    <link rel="stylesheet" href="/css/StudentDashboard.css">
+    <script src="/js/StudentDashboard.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="/img/ktu-logo.png" alt="Logo" class="logo">
+        </div>
+
+        <div id="menu">
+            <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Öğrenci İşlemleri</span>
+            <div id="studentMenu" class="sub-menu">
+                <!-- 'id' dinamik olarak yerleştirilecek -->
+                <span><a href="#" id="updateProfileLink">Profil Güncelle</a></span>
+                <span><a href="#" id="viewTranscriptLink">Transkript Görüntüle</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
+            <div id="courseMenu" class="sub-menu">
+                <!-- 'id' dinamik olarak yerleştirilecek -->
+                <span><a href="#" id="selectCoursesLink">Ders Seç</a></span>
+                <span><a href="#" id="myCoursesLink">Derslerim</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="student-info">
+        <h2>Hoşgeldiniz, <span id="studentName">Yükleniyor...</span></h2>
+        <p>E-posta: <span id="studentEmail">Yükleniyor...</span></p>
+        <p>Öğrenci Numarası: <span id="studentNumber">Yükleniyor...</span></p>
+        <p>Bölüm: <span id="studentDepartment">Yükleniyor...</span></p>
+    </div>
+
+</body>
+</html>

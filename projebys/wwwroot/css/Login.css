@@ -1,0 +1,109 @@
+﻿body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #003d63;
+    color: #ffffff;
+}
+
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    text-align: center;
+    background-color: #013a63;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.login-header {
+    margin-bottom: 20px;
+}
+
+.ktu-logo {
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+.login-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.tab {
+    flex: 1;
+    padding: 10px;
+    background-color: #014f86;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+    .tab.active {
+        background-color: #0077b6;
+    }
+
+.login-form {
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: row; /* Bu, alt elemanların dikeyde hizalanmasını sağlar */
+}
+
+input[type="email"],
+input[type="text"],
+input[type="password"] {
+    width: 100%; /* E-posta, şifre ve metin kutularının aynı genişlikte olmasını sağlar */
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    background-color: #f1f1f1;
+    color: #000000;
+    font-size: 16px;
+    box-sizing: border-box; /* İçeriğin kutu boyutunu etkileyen padding'leri dahil eder */
+}
+
+
+.password-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #000000;
+    font-size: 16px;
+}
+
+.forgot-password {
+    display: block;
+    margin: 10px 0;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+    .forgot-password:hover {
+        text-decoration: underline;
+    }
+
+.submit-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #0077b6;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+    .submit-button:hover {
+        background-color: #005f8a;
+    }

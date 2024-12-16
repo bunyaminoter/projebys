@@ -1,0 +1,109 @@
+﻿@page "/personnel/mystudents/${advisorId}"
+@model projebys.Pages.Personnel.MyStudentsModel
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Öğrencilerim</title>
+    <link rel="stylesheet" href="/css/MyStudents.css">
+    <script src="/js/MyStudents.js" defer></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="/img/ktu-logo.png" alt="Logo" class="logo">
+        </div>
+
+        <div id="menu">
+            <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
+            <div id="personnelMenu" class="sub-menu">
+                <span><a href="/Personnel/Profile">Profil Güncelle</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Danışman İşlemleri</span>
+            <div id="studentMenu" class="sub-menu">
+                <span><a href="/Personnel/MyStudents">Öğrencilerim</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
+            <div id="courseMenu" class="sub-menu">
+                <span><a href="/Personnel/Courses/Add">Ders Ekle</a></span>
+                <span><a href="/Personnel/Courses/Update">Ders Güncelle</a></span>
+                <span><a href="/Personnel/Courses/Delete">Ders Sil</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="students-container">
+        <h2>Öğrencilerim</h2>
+        <p>Danışmanlık yaptığınız öğrenci listesi:</p>
+
+        <table id="studentsTable">
+            <thead>
+                <tr>
+                    <th>Öğrenci Adı</th>
+                    <th>Öğrenci Numarası</th>
+                    <th>Bölüm</th>
+                    <th>E-posta</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Öğrenci bilgileri burada listelenecek -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Danışmanın öğrencilerini yükle
+            fetch('/api/Advisors/GetMyStudents', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.students) {
+                    const studentsTable = document.getElementById('studentsTable').getElementsByTagName('tbody')[0];
+
+                    data.students.forEach(student => {
+                        const row = document.createElement('tr');
+
+                        const studentName = document.createElement('td');
+                        studentName.textContent = student.fullName;
+                        row.appendChild(studentName);
+
+                        const studentNumber = document.createElement('td');
+                        studentNumber.textContent = student.studentNumber;
+                        row.appendChild(studentNumber);
+
+                        const department = document.createElement('td');
+                        department.textContent = student.department || 'Bölüm Bilgisi Bulunamadı';
+                        row.appendChild(department);
+
+                        const email = document.createElement('td');
+                        email.textContent = student.email;
+                        row.appendChild(email);
+
+                        const actions = document.createElement('td');
+                        actions.innerHTML = `<a href="/Student/Profile/${student.studentID}" class="btn">Profili Görüntüle</a>`;
+                        row.appendChild(actions);
+
+                        studentsTable.appendChild(row);
+                    });
+                } else {
+                    alert("Öğrenciler yüklenirken bir hata oluştu.");
+                }
+            })
+            .catch(error => {
+                console.error("Hata:", error);
+                alert("Öğrenciler yüklenirken bir hata oluştu.");
+            });
+        });
+    </script>
+</body>
+</html>

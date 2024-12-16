@@ -1,0 +1,49 @@
+﻿@page
+@model projebys.Pages.Personnel.PersonnelDashboardModel
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personel Dashboard</title>
+    <link rel="stylesheet" href="/css/PersonnelDashboard.css"> <!-- CSS Bağlantısı -->
+    <script src="/js/PersonnelDashboard.js" defer></script>  <!-- JS Bağlantısı -->
+</head>
+<body>
+    <div class="sidebar">
+        <!-- Logo -->
+        <div class="logo-container">
+            <img src="/img/ktu-logo.png" alt="Logo" class="logo"> <!-- Logo dosyasının yolu -->
+        </div>
+
+        <!-- Menü Başlangıcı -->
+        <div id="menu">
+            <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
+            <div id="personnelMenu" class="sub-menu">
+                <span><a href="#" id="updateProfileLink">Profil Güncelle</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Danışman İşlemleri</span>
+            <div id="studentMenu" class="sub-menu">
+                <span><a href="#" id="myStudentsLink">Öğrencilerim</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
+            <div id="courseMenu" class="sub-menu">
+                <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
+                <span><a href="#" id="updateCourseLink">Ders Güncelle</a></span>
+                <span><a href="#" id="deleteCourseLink">Ders Sil</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="advisor-info">
+        <h2>Hoşgeldiniz, <span id="advisorName">Yükleniyor...</span></h2>
+        <p>Unvan: <span id="advisorTitle">Yükleniyor...</span></p>
+        <p>Bölüm: <span id="advisorDepartment">Yükleniyor...</span></p>
+        <p>E-posta: <span id="advisorEmail">Yükleniyor...</span></p>
+    </div>
+
+</body>
+</html>

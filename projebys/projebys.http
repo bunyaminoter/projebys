@@ -1,0 +1,15 @@
+@projebys_HostAddress = http://localhost:5123
+
+GET {{projebys_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+POST {{projebys_HostAddress}}/api/Login/authenticate/
+Accept: application/json
+
+###
+
+post {{projebys_HostAddress}}/api/Login/check-login/
+Accept: application/json
+
+###

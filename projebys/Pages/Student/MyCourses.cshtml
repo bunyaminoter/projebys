@@ -1,0 +1,53 @@
+﻿@page "/students/MyCourses/{id:int}"
+@model projebys.Pages.Student.MyCoursesModel
+@{
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Derslerim</title>
+    <link rel="stylesheet" href="/css/MyCourses.css">
+    <script src="/js/MyCourses.js" defer></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="/img/ktu-logo.png" alt="Logo" class="logo">
+        </div>
+
+        <div id="menu">
+            <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Öğrenci İşlemleri</span>
+            <div id="studentMenu" class="sub-menu">
+                <span><a href="#" id="updateProfileLink">Profil Güncelle</a></span>
+                <span><a href="#" id="viewTranscriptLink">Transkript Görüntüle</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
+            <div id="courseMenu" class="sub-menu">
+                <span><a href="#" id="selectCoursesLink">Ders Seç</a></span>
+                <span><a href="#" id="myCoursesLink">Derslerim</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="my-courses-container">
+        <h2>Derslerim</h2>
+        <table id="myCoursesTable">
+            <thead>
+                <tr>
+                    <th>Ders Kodu</th>
+                    <th>Ders Adı</th>
+                    <th>Kredi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Ders listesi burada doldurulacak -->
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
+
+}

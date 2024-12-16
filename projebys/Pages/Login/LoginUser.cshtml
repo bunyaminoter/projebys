@@ -1,0 +1,42 @@
+﻿@page
+@model projebys.Pages.Login.LoginUserModel
+@{
+    ViewData["Title"] = "KTÜ Login";
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="/css/Login.css">
+    <script src="/js/Login.js"></script>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <img src="/img/ktu-logo.png" alt="KTÜ Logo" class="ktu-logo" />
+            <h3>Karadeniz Teknik Üniversitesi</h3>
+        </div>
+
+        <div class="login-tabs">
+            <button class="tab student active">Öğrenci</button>
+            <button class="tab personnel">Personel</button>
+        </div>
+
+        <form id="login-form" class="login-form">
+            <div class="form-group">
+                <input type="text" id="email" name="Email" placeholder="E-posta" required />
+            </div>
+            <div class="form-group password-group">
+                <input type="password" id="password" name="PasswordHash" placeholder="Şifre" required />
+            </div>
+
+            <!-- Hata mesajını gösterecek alan -->
+            <div id="error-message" style="color: red; margin-top: 10px; display: none;"></div>
+
+            <button type="submit" id="login-button" class="submit-button">Giriş Yap</button>
+        </form>
+    </div>
+</body>
+</html>

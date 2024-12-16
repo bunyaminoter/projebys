@@ -1,0 +1,101 @@
+﻿@page "/personnel/courses/add/${advisorId}"
+@model projebys.Pages.Personnel.CourseAddModel
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ders Ekle</title>
+    <link rel="stylesheet" href="/css/CourseAdd.css">
+    <script src="/js/CourseAdd.js" defer></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="/img/ktu-logo.png" alt="Logo" class="logo">
+        </div>
+
+        <div id="menu">
+            <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
+            <div id="personnelMenu" class="sub-menu">
+                <span><a href="/Personnel/Profile">Profil Güncelle</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
+            <div id="courseMenu" class="sub-menu">
+                <span><a href="/Personnel/Courses">Derslerim</a></span>
+                <span><a href="/Personnel/Courses/Add">Ders Ekle</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="course-add-container">
+        <h2>Ders Ekle</h2>
+        <p>Aşağıdaki formu doldurarak yeni bir ders ekleyebilirsiniz:</p>
+        <form id="courseAddForm" method="post" action="/api/Courses/Add">
+            <div class="form-group">
+                <label for="courseCode">Ders Kodu:</label>
+                <input type="text" id="courseCode" name="courseCode" required />
+            </div>
+            <div class="form-group">
+                <label for="courseName">Ders Adı:</label>
+                <input type="text" id="courseName" name="courseName" required />
+            </div>
+            <div class="form-group">
+                <label for="courseCredits">Kredi:</label>
+                <input type="number" id="courseCredits" name="courseCredits" min="1" max="10" required />
+            </div>
+            <div class="form-group">
+                <label for="courseDepartment">Bölüm:</label>
+                <select id="courseDepartment" name="courseDepartment" required>
+                    <option value="">Bölüm Seçin</option>
+                    <option value="Bilgisayar Mühendisliği">Bilgisayar Mühendisliği</option>
+                    <option value="Elektrik Mühendisliği">Elektrik Mühendisliği</option>
+                    <option value="Makine Mühendisliği">Makine Mühendisliği</option>
+                    <!-- Diğer bölümler buraya eklenebilir -->
+                </select>
+            </div>
+
+            <button type="submit">Ders Ekle</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const courseAddForm = document.getElementById('courseAddForm');
+
+            courseAddForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Formun varsayılan gönderilmesini engelle
+
+                const formData = new FormData(courseAddForm);
+                const courseData = {};
+                formData.forEach((value, key) => {
+                    courseData[key] = value;
+                });
+
+                fetch('/api/Courses/Add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(courseData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Ders başarıyla eklendi!');
+                        window.location.href = '/Personnel/Courses'; // Derslerim sayfasına yönlendir
+                    } else {
+                        alert('Ders ekleme sırasında bir hata oluştu!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    alert('Ders eklerken bir hata oluştu.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

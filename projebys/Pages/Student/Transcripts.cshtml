@@ -1,0 +1,145 @@
+﻿@page "/students/transcript/{id:int}"
+@model projebys.Pages.Student.TranscriptModel
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transkript Görüntüleme</title>
+    <link rel="stylesheet" href="/css/Transcript.css">
+    <script src="/js/Transcript.js" defer></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="/img/ktu-logo.png" alt="Logo" class="logo">
+        </div>
+
+        <div id="menu">
+            <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Öğrenci İşlemleri</span>
+            <div id="studentMenu" class="sub-menu">
+                <!-- Linkler JS ile dinamik olarak güncellenecek -->
+                <span><a href="#" id="updateProfileLink">Profil Güncelle</a></span>
+                <span><a href="#" id="viewTranscriptLink">Transkript Görüntüle</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
+            <div id="courseMenu" class="sub-menu">
+                <span><a href="#" id="selectCoursesLink">Ders Seç</a></span>
+                <span><a href="#" id="myCoursesLink">Derslerim</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="transcript-container">
+        <h2>Transkript Görüntüleme</h2>
+
+        <div id="studentInfo">
+            <h3>Öğrenci Bilgileri</h3>
+            <p><strong>Ad:</strong> <span id="studentName"></span></p>
+            <p><strong>E-posta:</strong> <span id="studentEmail"></span></p>
+            <p><strong>Öğrenci Numarası:</strong> <span id="studentNumber"></span></p>
+            <p><strong>Bölüm:</strong> <span id="studentDepartment"></span></p>
+        </div>
+
+        <h3>Dersler ve Notlar</h3>
+        <table id="transcriptTable">
+            <thead>
+                <tr>
+                    <th>Ders Adı</th>
+                    <th>Yıl</th>
+                    <th>Dönem</th>
+                    <th>Not</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dersler burada listelenecek -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Alt menü aç/kapa fonksiyonu
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Kullanıcı bilgilerini yükle
+            fetch('/api/Student/getStudentInfo', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Kullanıcı bilgileri alınamadı.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Data doğru geldiği durumda bilgileri sayfada göster
+                    if (data && data.studentInfo) {
+                        document.getElementById('studentName').textContent = `${data.studentInfo.firstName} ${data.studentInfo.lastName}`;
+                        document.getElementById('studentEmail').textContent = data.email;
+                        document.getElementById('studentNumber').textContent = data.studentInfo.studentID;
+                        document.getElementById('studentDepartment').textContent = data.studentInfo.department || "Bilgisayar Mühendisliği";
+
+                        // Öğrenci ID'sini al
+                        const studentId = data.studentInfo.studentID;
+
+                        // Linkleri dinamik olarak ayarla
+                        document.getElementById('updateProfileLink').addEventListener('click', function (event) {
+                            event.preventDefault();
+                            window.location.href = `/students/updateProfile/${studentId}`;
+                        });
+
+                        document.getElementById('viewTranscriptLink').addEventListener('click', function (event) {
+                            event.preventDefault();
+                            window.location.href = `/students/transcript/${studentId}`;
+                        });
+
+                        document.getElementById('selectCoursesLink').addEventListener('click', function (event) {
+                            event.preventDefault();
+                            window.location.href = `/students/courses/${studentId}`;
+                        });
+
+                        document.getElementById('myCoursesLink').addEventListener('click', function (event) {
+                            event.preventDefault();
+                            window.location.href = `/students/MyCourses/${studentId}`;
+                        });
+
+                        // Transkript verilerini API'den al ve tabloyu doldur
+                        fetch(`/api/Student/${studentId}/transcript`)
+                            .then(response => response.json())
+                            .then(transcriptData => {
+                                // Transkript tablosunu dolduruyoruz
+                                const transcriptTable = document.getElementById('transcriptTable').getElementsByTagName('tbody')[0];
+                                transcriptData.courses.forEach(course => {
+                                    const row = transcriptTable.insertRow();
+                                    row.innerHTML = `
+                                        <td>${course.courseName}</td>
+                                        <td>${course.year}</td>
+                                        <td>${course.semester}</td>
+                                        <td>${course.grade}</td>
+                                    `;
+                                });
+                            })
+                            .catch(error => console.error('Transkript verileri yüklenirken hata oluştu:', error));
+                    } else {
+                        console.error("Öğrenci bilgileri eksik veya hatalı");
+                        alert("Öğrenci bilgileri yüklenirken bir hata oluştu.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Hata:", error);
+                    alert("Kullanıcı bilgileri yüklenirken bir hata oluştu.");
+                    window.location.href = '/Login/Loginuser';
+                });
+        });
+    </script>
+</body>
+</html>

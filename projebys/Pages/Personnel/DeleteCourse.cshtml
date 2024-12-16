@@ -1,0 +1,118 @@
+﻿@page "/personnel/courses/delete/${advisorId}"
+@model projebys.Pages.Personnel.DeleteCourseModel
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ders Sil</title>
+    <link rel="stylesheet" href="/css/CourseDelete.css">
+    <script src="/js/CourseDelete.js" defer></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="/img/ktu-logo.png" alt="Logo" class="logo">
+        </div>
+
+        <div id="menu">
+            <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
+            <div id="personnelMenu" class="sub-menu">
+                <span><a href="/Personnel/Profile">Profil Güncelle</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
+            <div id="courseMenu" class="sub-menu">
+                <span><a href="/Personnel/Courses">Derslerim</a></span>
+                <span><a href="/Personnel/Courses/Add">Ders Ekle</a></span>
+                <span><a href="/Personnel/Courses/Delete">Ders Sil</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="course-delete-container">
+        <h2>Ders Sil</h2>
+        <p>Aşağıdaki listeden silmek istediğiniz dersi seçebilirsiniz:</p>
+        <form id="courseDeleteForm" method="post" action="/api/Courses/Delete">
+            <div class="form-group">
+                <label for="courseSelect">Ders Seçin:</label>
+                <select id="courseSelect" name="courseId" required>
+                    <option value="">Ders Seçin</option>
+                    <!-- Ders listesi burada doldurulacak -->
+                </select>
+            </div>
+
+            <button type="submit">Ders Sil</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sayfa yüklendiğinde mevcut dersleri listele
+            fetch('/api/Courses/GetAllCourses', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.courses) {
+                    const courseSelect = document.getElementById('courseSelect');
+                    data.courses.forEach(course => {
+                        const option = document.createElement('option');
+                        option.value = course.courseId;
+                        option.textContent = `${course.courseCode} - ${course.courseName}`;
+                        courseSelect.appendChild(option);
+                    });
+                } else {
+                    alert("Dersler yüklenirken bir hata oluştu.");
+                }
+            })
+            .catch(error => {
+                console.error("Hata:", error);
+                alert("Dersler yüklenirken bir hata oluştu.");
+            });
+
+            // Ders silme işlemi
+            const courseDeleteForm = document.getElementById('courseDeleteForm');
+
+            courseDeleteForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const courseId = document.getElementById('courseSelect').value;
+
+                if (!courseId) {
+                    alert("Lütfen bir ders seçin.");
+                    return;
+                }
+
+                const confirmation = confirm(`Ders ${courseId} silinecek. Emin misiniz?`);
+                if (confirmation) {
+                    fetch('/api/Courses/Delete', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ courseId: courseId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Ders başarıyla silindi!');
+                            window.location.href = '/Personnel/Courses'; // Derslerim sayfasına yönlendir
+                        } else {
+                            alert('Ders silme sırasında bir hata oluştu.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Hata:', error);
+                        alert('Ders silme işlemi sırasında bir hata oluştu.');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
