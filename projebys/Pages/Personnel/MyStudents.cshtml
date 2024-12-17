@@ -47,7 +47,6 @@
                     <th>Öğrenci Numarası</th>
                     <th>Bölüm</th>
                     <th>E-posta</th>
-                    <th>İşlemler</th>
                 </tr>
             </thead>
             <tbody>
@@ -130,9 +129,9 @@
                 studentName.textContent = student.fullName;
                 row.appendChild(studentName);
 
-                const studentNumber = document.createElement('td');
-                studentNumber.textContent = student.studentNumber;
-                row.appendChild(studentNumber);
+                 const studentID = document.createElement('td'); 
+                 studentID.textContent = student.studentID; 
+                 row.appendChild(studentID);
 
                 const department = document.createElement('td');
                 department.textContent = student.department || 'Bölüm Bilgisi Bulunamadı';
@@ -141,11 +140,6 @@
                 const email = document.createElement('td');
                 email.textContent = student.email;
                 row.appendChild(email);
-
-                const actions = document.createElement('td');
-                actions.innerHTML = `<a href="/Student/Profile/${student.studentID}" class="btn">Profili Görüntüle</a>`;
-                row.appendChild(actions);
-
                 return row;
             }
         });

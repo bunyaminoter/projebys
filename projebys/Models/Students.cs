@@ -1,4 +1,6 @@
-﻿namespace projebys.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace projebys.Models
 {
     public class Students
     {
@@ -11,12 +13,16 @@
         public string Department { get; set; }
         public int ClassID { get; set; }
 
+
         public virtual ICollection<Transcripts> Transcripts { get; set; }
 
         public virtual ICollection<Courses> Courses { get; set; }
         public virtual ICollection<StudentCourseSelections> CourseSelections { get; set; }
         public virtual Users User { get; set; }
         public virtual Classes Class { get; set; }
+
+        public virtual Advisors Advisor { get; set; } // İlişkili danışman nesnesi
+
 
     }
 }

@@ -1,0 +1,129 @@
+﻿@page "/personnel/courses/list"
+@model projebys.Pages.Personnel.GetAllCourseModel
+@{
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dersler</title>
+    <link rel="stylesheet" href="/css/PersonnelCourses.css">
+    <script></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="/img/ktu-logo.png" alt="Logo" class="logo">
+        </div>
+
+        <div id="menu">
+            <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
+            <div id="personnelMenu" class="sub-menu">
+                <span><a href="#" id="profileUpdateLink">Profil Güncelle</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Danışman İşlemleri</span>
+            <div id="studentMenu" class="sub-menu">
+                <span><a href="#" id="myStudentsLink">Öğrencilerim</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
+            <div id="courseMenu" class="sub-menu">
+                <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
+                <span><a href="#" id="updateCourseLink">Ders Güncelle</a></span>
+                <span><a href="#" id="deleteCourseLink">Ders Sil</a></span>
+            </div>
+        </div>
+    </div>
+
+        <div class="courses-container">
+            <h2>Dersler</h2>
+            <p>Mevcut derslerin listesi:</p>
+
+            <table id="coursesTable">
+                <thead>
+                    <tr>
+                        <th>Ders Adı</th>
+                        <th>Bölüm</th>
+                        <th>Zorunlu/Seçmeli</th>
+                        <th>Ders Kodu</th>
+                        <th>Kredi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Ders bilgileri burada listelenecek -->
+                </tbody>
+            </table>
+
+        <p id="noCoursesMessage" style="display: none;">Henüz ders bulunmamaktadır.</p>
+    </div>
+
+    <script>
+
+                function toggleSubMenu(menuId) {
+                const menu = document.getElementById(menuId);
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                // Ders listesini yükle
+                loadCourses();
+            });
+
+            function loadCourses() {
+                fetch('/api/Course/GetAllCourses', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const coursesTable = document.getElementById('coursesTable').getElementsByTagName('tbody')[0];
+                    const noCoursesMessage = document.getElementById('noCoursesMessage');
+
+                    if (data && data.courses && data.courses.length > 0) {
+                        data.courses.forEach(course => {
+                            const row = createCourseRow(course);
+                            coursesTable.appendChild(row);
+                        });
+                        noCoursesMessage.style.display = 'none';
+                    } else {
+                        noCoursesMessage.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error("Hata:", error);
+                    // alert("Dersler yüklenirken bir hata oluştu.");
+                });
+            }
+
+            function createCourseRow(course) {
+                const row = document.createElement('tr');
+
+                const courseName = document.createElement('td');
+                courseName.textContent = course.courseName;
+                row.appendChild(courseName);
+
+                const department = document.createElement('td');
+                department.textContent = course.department || 'Bölüm Bilgisi Bulunamadı';
+                row.appendChild(department);
+
+                const isMandatory = document.createElement('td');
+                isMandatory.textContent = course.isMandatory ? 'Zorunlu' : 'Seçmeli';
+                row.appendChild(isMandatory);
+
+                const courseCode = document.createElement('td');
+                courseCode.textContent = course.courseCode;
+                row.appendChild(courseCode);
+
+                const credit = document.createElement('td');
+                credit.textContent = course.credit;
+                row.appendChild(credit);
+
+                return row;
+            }
+        </script>
+
+</body>
+</html>
+
+}

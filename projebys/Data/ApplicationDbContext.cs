@@ -32,6 +32,13 @@ namespace projebys.Data
             // Öğrenciler (Students) tablosu için birincil anahtar
             modelBuilder.Entity<Students>().HasKey(s => s.StudentID);
 
+            // Students -> Advisors ilişkisi
+            modelBuilder.Entity<Students>()
+                .HasOne<Advisors>()                   // Her öğrenci bir danışmana sahip olabilir
+                .WithMany()                           // Bir danışmanın birden fazla öğrencisi olabilir
+                .HasForeignKey(s => s.AdvisorID);      // Students tablosundaki AdvisorID, foreign key olarak atanır
+
+
             // Dersler (Courses) tablosu için birincil anahtar
             modelBuilder.Entity<Courses>().HasKey(c => c.CourseID);
 

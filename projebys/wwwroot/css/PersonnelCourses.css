@@ -1,0 +1,220 @@
+﻿/* Genel Sayfa Stilleri */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: #003d63; /* Arka plan rengi */
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Sayfa Başlığı */
+.header {
+    width: 100%;
+    background-color: #002b45; /* Arka plan rengi */
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* Sol Menü (Sidebar) */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #003d63;
+    padding: 20px;
+    color: #ffffff;
+    overflow-y: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Sidebar gölge */
+}
+
+/* Logo */
+.logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 150px; /* Logonun boyutunu ihtiyaca göre ayarlayın */
+    display: block;
+    margin: 0 auto;
+}
+
+/* Menü Başlıkları */
+.menu-item {
+    padding: 15px;
+    background-color: #004d80;
+    color: #ffffff;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    font-weight: bold;
+    display: block;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+    .menu-item:hover {
+        background-color: #006bb3;
+    }
+
+/* Alt Menü */
+.sub-menu {
+    padding: 10px 20px;
+    margin: 5px 0;
+    background-color: #00567a;
+    border-radius: 5px;
+    display: none; /* Varsayılan olarak gizli */
+}
+
+    .sub-menu span {
+        display: block;
+        padding: 5px 10px;
+        cursor: pointer;
+        color: #ffffff;
+        transition: background-color 0.3s;
+    }
+
+        .sub-menu span a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .sub-menu span:hover {
+            background-color: #007bb5;
+        }
+
+/* Sayfa Ana İçerik */
+.courses-container {
+    position: relative;
+    margin-left: 300px; /* Sidebar genişliği */
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #004d80;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: #ffffff;
+}
+
+/* Tablo Stilleri */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin-top: 20px;
+    background-color: #ffffff;
+    color: #003d63;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background-color: #004d80;
+    color: #ffffff;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+tr:hover {
+    background-color: #e0f7fa;
+}
+
+/* Form Elemanları */
+form div {
+    margin-bottom: 15px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+form input, form button {
+    padding: 10px;
+    border-radius: 4px;
+    border: none;
+    background-color: #007bb5;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+form input {
+    width: calc(100% - 20px);
+    background-color: #ffffff;
+    color: #003d63;
+    border: 1px solid #ccc;
+}
+
+    form input:focus {
+        outline: none;
+        border-color: #007bb5;
+    }
+
+form button {
+    margin-top: 10px;
+    width: 100%;
+}
+
+    form button:hover {
+        background-color: #00567a;
+    }
+
+/* Öğrenci Bilgileri */
+.student-info {
+    text-align: center;
+    margin: 20px auto;
+    color: #ffffff; /* Metin rengi */
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Animasyon ve Geçiş Efektleri */
+.menu-item, .sub-menu span, form input, form button {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Erişilebilirlik ve Duyarlılık */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .courses-container {
+        margin-left: 0;
+        margin-top: 0;
+        padding: 10px;
+    }
+
+    .menu-item {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .sub-menu {
+        padding: 5px;
+    }
+}

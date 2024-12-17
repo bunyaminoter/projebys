@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 document.getElementById('listCourseLink').addEventListener('click', function (event) {
                     event.preventDefault();
-                    window.location.href = `/personnel/courses/list/${advisorId}`;
+                    window.location.href = `/personnel/courses/list`;
                 });
 
             } else {

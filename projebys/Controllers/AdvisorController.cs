@@ -50,34 +50,35 @@ public class AdvisorsController : ControllerBase
         });
     }
 
-    // Danışmanın öğrencilerini getir
-    [HttpGet("GetMyStudents")]
-    public async Task<IActionResult> GetMyStudents()
-    {
-        var advisorId = HttpContext.Session.GetInt32("UserID"); // Oturumdaki danışman ID
-        if (advisorId == null)
+        // Danışmanın öğrencilerini getir
+        [HttpGet("GetMyStudents/{id}")]
+        public async Task<IActionResult> GetMyStudents(int id)
         {
-            return Unauthorized(new { message = "Kullanıcı giriş yapmamış." });
-        }
-
-        var students = await _context.Students
-            .Where(s => s.AdvisorID == advisorId) // Danışmana ait öğrenciler
-            .Select(s => new
+            var advisor = await _context.Advisors.FindAsync(id);
+            if (advisor == null)
             {
-                s.StudentID,
-                FullName = $"{s.FirstName} {s.LastName}",
-                s.Department,
-                s.Email
-            })
-            .ToListAsync();
+                return NotFound(new { message = "Danışman bulunamadı." });
+            }
 
-        if (!students.Any())
-        {
-            return NotFound(new { message = "Danışmana ait öğrenci bulunamadı." });
+            // Danışmanın öğrencilerini getir
+            var students = await _context.Students
+                .Where(s => s.AdvisorID == id)  // Danışmana ait öğrenciler
+                .Select(s => new
+                {
+                    s.StudentID,
+                    FullName = $"{s.FirstName} {s.LastName}",
+                    s.Department,
+                    s.Email
+                })
+                .ToListAsync();
+
+            if (!students.Any())
+            {
+                return NotFound(new { message = "Danışmana ait öğrenci bulunamadı." });
+            }
+
+            return Ok(new { students });
         }
-
-        return Ok(new { students });
-    }
 
         public class AdvisorUpdateModel
         {

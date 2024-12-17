@@ -29,6 +29,8 @@ namespace projebys.Controllers
                 {
                     c.CourseID,
                     c.CourseName,
+                    c.Department,
+                    c.IsMandatory,
                     c.CourseCode,
                     c.Credit
                 })
@@ -36,6 +38,7 @@ namespace projebys.Controllers
 
             return Ok(new { courses });
         }
+
 
         // Ders bilgilerini güncelle
         [HttpPost("Update")]
