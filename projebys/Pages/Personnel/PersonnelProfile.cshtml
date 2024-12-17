@@ -56,8 +56,6 @@
                 <input type="email" id="email" name="email" required>
             </div>
 
-            
-
             <button type="submit">Bilgileri Güncelle</button>
         </form>
     </div>
@@ -69,6 +67,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
+            let advisorId; // advisorId'yi burada tanımla
+
             // Danışman bilgilerini yükle
             fetch('/api/Advisors/getAdvisorInfo', {
                 method: 'GET',
@@ -80,7 +80,7 @@
             })
             .then(data => {
                 if (data && data.advisorInfo) {
-                    const advisorId = data.advisorInfo.advisorID;
+                    advisorId = data.advisorInfo.advisorID; // advisorId'yi al
 
                     // Dinamik bağlantıları ayarla
                     document.getElementById('profileLink').href = `/personnel/profile/${advisorId}`;
@@ -103,15 +103,15 @@
 
             // Profil formunu doldur
             function populateProfileForm(profileData) {
-                document.getElementById('fullName').value = profileData.fullName || '';
-                document.getElementById('email').value = profileData.email || '';
+                document.getElementById('fullName').value = profileData.fullName;
+                document.getElementById('email').value = profileData.email;
                 document.getElementById('title').value = profileData.title || 'Başlık Bilgisi Bulunamadı';
             }
 
             // Profil bilgilerini güncelle
             const profileForm = document.getElementById('profileForm');
             profileForm.addEventListener('submit', function (event) {
-                event.preventDefault();
+                event.preventDefault(); // Sayfa yenilenmesini engelle
 
                 const updatedProfile = {
                     fullName: document.getElementById('fullName').value,
@@ -119,21 +119,20 @@
                     title: document.getElementById('title').value
                 };
 
-                fetch('/api/Advisors/UpdateProfile', {
-                    method: 'POST',
+                fetch(`/api/Advisors/updateProfile/${advisorId}`, {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(updatedProfile)
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) throw new Error("Profil güncellenemedi.");
+                    return response.json();
+                })
                 .then(data => {
-                    if (data.success) {
-                        alert('Profil bilgileri başarıyla güncellendi!');
-                        window.location.reload();
-                    } else {
-                        alert('Profil güncelleme sırasında bir hata oluştu.');
-                    }
+                    alert('Profil bilgileri başarıyla güncellendi!');
+                    window.location.reload();
                 })
                 .catch(error => {
                     console.error("Hata:", error);

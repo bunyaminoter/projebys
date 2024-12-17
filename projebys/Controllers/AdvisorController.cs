@@ -44,6 +44,7 @@ public class AdvisorsController : ControllerBase
                 user.Advisor.AdvisorID,
                 user.Advisor.FullName,
                 user.Advisor.Department,
+                user.Advisor.Email,
                 user.Advisor.Title
             }
         });
@@ -89,6 +90,11 @@ public class AdvisorsController : ControllerBase
         [HttpPut("updateProfile/{id}")]
         public async Task<IActionResult> UpdateProfile(int id, [FromBody] AdvisorUpdateModel model)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Geçersiz veri gönderildi." });
+            }
 
             var advisor = await _context.Advisors.FindAsync(id);
             if (advisor == null)
