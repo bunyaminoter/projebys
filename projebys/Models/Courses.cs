@@ -16,6 +16,7 @@ namespace projebys.Models
 
         public virtual ICollection<Transcripts> Transcripts { get; set; }
 
-        public virtual ICollection<StudentCourseSelections> StudentSelections { get; set; }
+        public virtual ICollection<StudentCourseSelections> CourseSelections { get; set; }
+
     }
 }

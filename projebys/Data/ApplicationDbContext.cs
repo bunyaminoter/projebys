@@ -35,6 +35,13 @@ namespace projebys.Data
             // Dersler (Courses) tablosu için birincil anahtar
             modelBuilder.Entity<Courses>().HasKey(c => c.CourseID);
 
+            // Course -> CourseSelections ilişkisi
+            modelBuilder.Entity<Courses>()
+                .HasMany(c => c.CourseSelections)
+                .WithOne(cs => cs.Course)
+                .HasForeignKey(cs => cs.CourseID);
+
+
             // Ders Seçimleri (StudentCourseSelections) tablosu
             modelBuilder.Entity<StudentCourseSelections>().HasKey(scs => scs.SelectionID);
 
@@ -45,7 +52,7 @@ namespace projebys.Data
 
             modelBuilder.Entity<StudentCourseSelections>()
                 .HasOne(scs => scs.Course)
-                .WithMany(c => c.StudentSelections)
+                .WithMany(c => c.CourseSelections)
                 .HasForeignKey(scs => scs.CourseID);
 
             // Transkriptler (Transcripts) tablosu

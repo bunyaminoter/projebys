@@ -61,30 +61,6 @@ namespace projebys.Controllers
             return Ok(new { message = "Ders başarıyla güncellendi." });
         }
 
-        // Bir danışmana bağlı öğrencilerin seçtiği dersleri getir
-        [HttpGet("GetAdvisorCourses/{advisorId}")]
-        public async Task<IActionResult> GetAdvisorCourses(int advisorId)
-        {
-            var courses = await _context.Courses
-                .Include(c => c.StudentSelections)
-                .Where(c => c.StudentSelections.Any(cs => cs.Student.AdvisorID == advisorId))
-                .Select(c => new
-                {
-                    c.CourseID,
-                    c.CourseName,
-                    c.CourseCode,
-                    c.Credit,
-                    StudentCount = c.StudentSelections.Count
-                })
-                .ToListAsync();
-
-            if (!courses.Any())
-            {
-                return NotFound(new { message = "Bu danışman için ders bulunamadı." });
-            }
-
-            return Ok(new { courses });
-        }
     }
 
     // Model sınıfı: Ders güncelleme için

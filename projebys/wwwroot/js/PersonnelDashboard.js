@@ -70,6 +70,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     event.preventDefault();
                     window.location.href = `/personnel/Courses/Delete/${advisorId}`;
                 });
+
+                document.getElementById('listCourseLink').addEventListener('click', function (event) {
+                    event.preventDefault();
+                    window.location.href = `/personnel/courses/list/${advisorId}`;
+                });
+
             } else {
                 console.error("Danışman bilgileri eksik veya hatalı.");
                 alert("Danışman bilgileri yüklenirken bir hata oluştu.");

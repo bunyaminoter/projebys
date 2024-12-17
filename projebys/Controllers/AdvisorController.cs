@@ -2,7 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using projebys.Data;
 
-[Route("api/[controller]")]
+namespace projebys.Controllers
+{
+
+    [Route("api/[controller]")]
 [ApiController]
 public class AdvisorsController : ControllerBase
 {
@@ -13,7 +16,8 @@ public class AdvisorsController : ControllerBase
         _context = context;
     }
 
-    [HttpGet]
+
+        [HttpGet]
     [Route("getAdvisorInfo")]
     public IActionResult GetAdvisorInfo()
     {
@@ -74,6 +78,34 @@ public class AdvisorsController : ControllerBase
         return Ok(new { students });
     }
 
+        public class AdvisorUpdateModel
+        {
+            public string FullName { get; set; }
+            public string Title { get; set; }
+            public string Email { get; set; }
+        }
 
+        // Advisor profilini güncelle
+        [HttpPut("updateProfile/{id}")]
+        public async Task<IActionResult> UpdateProfile(int id, [FromBody] AdvisorUpdateModel model)
+        {
+
+            var advisor = await _context.Advisors.FindAsync(id);
+            if (advisor == null)
+            {
+                return NotFound();
+            }
+
+            // Advisor bilgilerini güncelle
+            advisor.FullName = model.FullName;
+            advisor.Title = model.Title;
+            advisor.Email = model.Email;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Profil başarıyla güncellendi." });
+        }
+
+    }
 
 }
