@@ -5,8 +5,12 @@ namespace projebys.Pages.Personnel
 {
     public class UpdateCourseModel : PageModel
     {
-        public void OnGet()
+        public int CourseId { get; set; }
+
+        public void OnGet(int courseId)
         {
+            // courseId, URL'den alýnan parametreyi temsil eder
+            CourseId = courseId;
         }
     }
 }

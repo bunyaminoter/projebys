@@ -66,11 +66,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     window.location.href = `/personnel/Courses/Update/${advisorId}`;
                 });
 
-                document.getElementById('deleteCourseLink').addEventListener('click', function (event) {
-                    event.preventDefault();
-                    window.location.href = `/personnel/Courses/Delete/${advisorId}`;
-                });
-
                 document.getElementById('listCourseLink').addEventListener('click', function (event) {
                     event.preventDefault();
                     window.location.href = `/personnel/courses/list`;

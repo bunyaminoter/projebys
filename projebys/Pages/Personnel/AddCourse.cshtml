@@ -19,15 +19,19 @@
         <div id="menu">
             <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
             <div id="personnelMenu" class="sub-menu">
-                <span><a href="#" id="profileUpdateLink">Profil Güncelle</a></span>
+                <span><a href="#" id="updateProfileLink">Profil Güncelle</a></span>
+            </div>
+
+            <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Danışman İşlemleri</span>
+            <div id="studentMenu" class="sub-menu">
+                <span><a href="#" id="myStudentsLink">Öğrencilerim</a></span>
             </div>
 
             <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
             <div id="courseMenu" class="sub-menu">
-                <span><a href="#" id="myCoursesLink">Derslerim</a></span>
                 <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
                 <span><a href="#" id="updateCourseLink">Ders Güncelle</a></span>
-                <span><a href="#" id="deleteCourseLink">Ders Sil</a></span>
+                <span><a href="#" id="listCourseLink">Tüm Dersleri Listele</a></span>
             </div>
         </div>
     </div>
@@ -35,26 +39,34 @@
     <div class="course-add-container">
         <h2>Ders Ekle</h2>
         <p>Aşağıdaki formu doldurarak yeni bir ders ekleyebilirsiniz:</p>
-        <form id="courseAddForm">
+        <form id="courseAddForm" method="post">
             <div class="form-group">
-                <label for="courseCode">Ders Kodu:</label>
-                <input type="text" id="courseCode" name="courseCode" required />
+                <label for="CourseCode">Ders Kodu:</label>
+                <input type="text" id="CourseCode" name="CourseCode" required />
             </div>
             <div class="form-group">
-                <label for="courseName">Ders Adı:</label>
-                <input type="text" id="courseName" name="courseName" required />
+                <label for="CourseName">Ders Adı:</label>
+                <input type="text" id="CourseName" name="CourseName" required />
             </div>
             <div class="form-group">
-                <label for="courseCredits">Kredi:</label>
-                <input type="number" id="courseCredits" name="courseCredits" min="1" max="10" required />
+                <label for="Credit">Kredi:</label>
+                <input type="number" id="Credit" name="Credit" min="1" max="10" required />
             </div>
             <div class="form-group">
-                <label for="courseDepartment">Bölüm:</label>
-                <select id="courseDepartment" name="courseDepartment" required>
+                <label for="IsMandatory">Zorunlu mu?</label>
+                <input type="hidden" name="IsMandatory" value="false" />
+                <input type="checkbox" id="IsMandatory" name="IsMandatory" value="true" />
+
+            </div>
+
+            <div class="form-group">
+                <label for="Department">Bölüm:</label>
+                <select id="Department" name="Department" required>
                     <option value="">Bölüm Seçin</option>
                     <option value="Bilgisayar Mühendisliği">Bilgisayar Mühendisliği</option>
                     <option value="Elektrik Mühendisliği">Elektrik Mühendisliği</option>
                     <option value="Makine Mühendisliği">Makine Mühendisliği</option>
+                    <option value="Yazılım Mühendisliği">Yazılım Mühendisliği</option>
                     <!-- Diğer bölümler buraya eklenebilir -->
                 </select>
             </div>
@@ -102,25 +114,36 @@
                         const advisorId = data.advisorInfo.advisorID;
 
                         // Linkleri dinamik olarak ayarla
-                        document.getElementById('profileUpdateLink').href = `/personnel/profile/${advisorId}`;
-                        document.getElementById('myCoursesLink').href = `/personnel/courses/${advisorId}`;
-                        document.getElementById('addCourseLink').href = `/personnel/courses/add/${advisorId}`;
-                         document.getElementById('updateCourseLink').href = `/personnel/courses/update/${advisorId}`;
-                        document.getElementById('deleteCourseLink').href = `/personnel/courses/delete/${advisorId}`;
+                         document.getElementById('updateProfileLink').href = `/personnel/profile/${advisorId}`;
+        document.getElementById('myStudentsLink').href = `/personnel/mystudents/${advisorId}`;
+        document.getElementById('addCourseLink').href = `/personnel/courses/add/${advisorId}`;
+        document.getElementById('updateCourseLink').href = `/personnel/courses/update/${advisorId}`;
+        document.getElementById('listCourseLink').href = `/personnel/courses/list/${advisorId}`;
 
                         // Ders ekleme formu işlemleri
                         const courseAddForm = document.getElementById('courseAddForm');
                         courseAddForm.addEventListener('submit', function (event) {
                             event.preventDefault(); // Formun varsayılan gönderilmesini engelle
 
-                            const formData = new FormData(courseAddForm);
-                            const courseData = {};
-                            formData.forEach((value, key) => {
-                                courseData[key] = value;
-                            });
+                                    const formData = new FormData(courseAddForm);
+        const courseData = {};
+
+        // FormData içeriğini nesneye dönüştür
+        formData.forEach((value, key) => {
+            // IsMandatory alanını boolean'a dönüştür
+            if (key === "IsMandatory") {
+                courseData[key] = value === "true"; // "true" string'ini boolean'a dönüştür
+            } else {
+                courseData[key] = value;
+            }
+        });
+
+        console.log("Gönderilen JSON:", courseData); // Kontrol için logla
+
+
 
                             // API'ye advisorId ile POST isteği gönder
-                            fetch(`/api/Courses/Add/${advisorId}`, {
+                            fetch(`/api/Course/Add`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -131,7 +154,7 @@
                                 .then(data => {
                                     if (data.success) {
                                         alert('Ders başarıyla eklendi!');
-                                        window.location.href = `/personnel/courses/${advisorId}`; // Derslerim sayfasına yönlendir
+                                        window.location.href = `/personnel/courses/list`; // Derslerim sayfasına yönlendir
                                     } else {
                                         alert('Ders ekleme sırasında bir hata oluştu!');
                                     }

@@ -1,40 +1,40 @@
 ﻿@page "/personnel/courses/list"
 @model projebys.Pages.Personnel.GetAllCourseModel
 @{
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dersler</title>
-    <link rel="stylesheet" href="/css/PersonnelCourses.css">
-    <script></script>
-</head>
-<body>
-    <div class="sidebar">
-        <div class="logo-container">
-            <img src="/img/ktu-logo.png" alt="Logo" class="logo">
+    <!DOCTYPE html>
+    <html lang="tr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dersler</title>
+        <link rel="stylesheet" href="/css/PersonnelCourses.css">
+        <script></script>
+    </head>
+    <body>
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="/img/ktu-logo.png" alt="Logo" class="logo">
+            </div>
+
+            <div id="menu">
+                <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
+                <div id="personnelMenu" class="sub-menu">
+                    <span><a href="#" id="updateProfileLink">Profil Güncelle</a></span>
+                </div>
+
+                <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Danışman İşlemleri</span>
+                <div id="studentMenu" class="sub-menu">
+                    <span><a href="#" id="myStudentsLink">Öğrencilerim</a></span>
+                </div>
+
+                <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
+                <div id="courseMenu" class="sub-menu">
+                    <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
+                    <span><a href="#" id="updateCourseLink">Ders Güncelle</a></span>
+                    <span><a href="#" id="listCourseLink">Tüm Dersleri Listele</a></span>
+                </div>
+            </div>
         </div>
-
-        <div id="menu">
-            <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
-            <div id="personnelMenu" class="sub-menu">
-                <span><a href="#" id="profileUpdateLink">Profil Güncelle</a></span>
-            </div>
-
-            <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Danışman İşlemleri</span>
-            <div id="studentMenu" class="sub-menu">
-                <span><a href="#" id="myStudentsLink">Öğrencilerim</a></span>
-            </div>
-
-            <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
-            <div id="courseMenu" class="sub-menu">
-                <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
-                <span><a href="#" id="updateCourseLink">Ders Güncelle</a></span>
-                <span><a href="#" id="deleteCourseLink">Ders Sil</a></span>
-            </div>
-        </div>
-    </div>
 
         <div class="courses-container">
             <h2>Dersler</h2>
@@ -48,6 +48,7 @@
                         <th>Zorunlu/Seçmeli</th>
                         <th>Ders Kodu</th>
                         <th>Kredi</th>
+                        <th>İşlemler</th> <!-- İşlemler sütunu eklendi -->
                     </tr>
                 </thead>
                 <tbody>
@@ -55,12 +56,11 @@
                 </tbody>
             </table>
 
-        <p id="noCoursesMessage" style="display: none;">Henüz ders bulunmamaktadır.</p>
-    </div>
+            <p id="noCoursesMessage" style="display: none;">Henüz ders bulunmamaktadır.</p>
+        </div>
 
-    <script>
-
-                function toggleSubMenu(menuId) {
+        <script>
+            function toggleSubMenu(menuId) {
                 const menu = document.getElementById(menuId);
                 menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
             }
@@ -119,11 +119,53 @@
                 credit.textContent = course.credit;
                 row.appendChild(credit);
 
+                // İşlemler butonları
+                const actions = document.createElement('td');
+                const updateButton = document.createElement('button');
+
+                updateButton.textContent = 'Güncelle';
+                updateButton.onclick = function () {
+                    window.location.href = `/personnel/courses/update/${course.courseID}`; // Güncelleme sayfasına yönlendir
+                };
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Sil';
+                deleteButton.onclick = function () {
+                    if (confirm(`Emin misiniz? ${course.courseName} dersini silmek istiyor musunuz?`)) {
+                        deleteCourse(course.courseID); // Ders silme işlemi
+                    }
+                };
+
+                actions.appendChild(updateButton);
+                actions.appendChild(deleteButton);
+                row.appendChild(actions);
+
                 return row;
             }
+
+            function deleteCourse(courseID) {
+                fetch(`/api/Course/Delete/${courseID}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                        .then(data => {
+                if (data.success) {
+                    alert("Ders başarıyla silindi!");
+                    // Sayfayı tamamen yenileyin
+                    location.reload();  // Sayfa yenilenecek
+                } else {
+                    alert("Ders silinemedi: " + data.message);
+                }
+            })
+                .catch(error => {
+                    console.error('Silme hatası:', error);
+                    alert("Ders silme sırasında bir hata oluştu.");
+                });
+            }
         </script>
-
-</body>
-</html>
-
+    </body>
+    </html>
 }

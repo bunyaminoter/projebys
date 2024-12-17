@@ -21,7 +21,6 @@ namespace projebys.Models
         public virtual Users User { get; set; }
         public virtual Classes Class { get; set; }
 
-        public virtual Advisors Advisor { get; set; } // İlişkili danışman nesnesi
 
 
     }

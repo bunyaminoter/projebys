@@ -19,7 +19,7 @@
         <div id="menu">
             <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
             <div id="personnelMenu" class="sub-menu">
-                <span><a href="#" id="profileUpdateLink">Profil Güncelle</a></span>
+                <span><a href="#" id="updateProfileLink">Profil Güncelle</a></span>
             </div>
 
             <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Danışman İşlemleri</span>
@@ -31,7 +31,7 @@
             <div id="courseMenu" class="sub-menu">
                 <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
                 <span><a href="#" id="updateCourseLink">Ders Güncelle</a></span>
-                <span><a href="#" id="deleteCourseLink">Ders Sil</a></span>
+                <span><a href="#" id="listCourseLink">Tüm Dersleri Listele</a></span>
             </div>
         </div>
     </div>
@@ -78,12 +78,11 @@
                     const advisorId = data.advisorInfo.advisorID;
 
                     // Dinamik bağlantıları ayarla
-                    document.getElementById('profileUpdateLink').href = `/personnel/profile/${advisorId}`;
-                    document.getElementById('myStudentsLink').href = `/personnel/mystudents/${advisorId}`;
-                    document.getElementById('addCourseLink').href = `/personnel/courses/add/${advisorId}`;
-                    document.getElementById('updateCourseLink').href = `/personnel/courses/update/${advisorId}`;
-                    document.getElementById('deleteCourseLink').href = `/personnel/courses/delete/${advisorId}`;
-
+                            document.getElementById('updateProfileLink').href = `/personnel/profile/${advisorId}`;
+        document.getElementById('myStudentsLink').href = `/personnel/mystudents/${advisorId}`;
+        document.getElementById('addCourseLink').href = `/personnel/courses/add/${advisorId}`;
+        document.getElementById('updateCourseLink').href = `/personnel/courses/update/${advisorId}`;
+        document.getElementById('listCourseLink').href = `/personnel/courses/list/${advisorId}`;
                     // Öğrenci listesini yükle
                     loadStudents(advisorId);
                 } else {
