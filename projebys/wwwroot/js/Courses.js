@@ -12,10 +12,6 @@
     // Seçilen alt menüyü aç/kapa
     menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
 }
-function toggleSubMenu(menuId) {
-    const menu = document.getElementById(menuId);
-    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-}
 
 document.addEventListener('DOMContentLoaded', function () {
     // Kullanıcı bilgilerini yükle
@@ -35,13 +31,15 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data && data.studentInfo) {
                 const studentId = data.studentInfo.studentID;
 
+                // Menülerdeki bağlantıları güncelle
                 document.getElementById('updateProfileLink').href = `/students/updateProfile/${studentId}`;
                 document.getElementById('viewTranscriptLink').href = `/students/transcript/${studentId}`;
                 document.getElementById('selectCoursesLink').href = `/students/courses/${studentId}`;
                 document.getElementById('myCoursesLink').href = `/students/MyCourses/${studentId}`;
 
-                // Ders listesini doldur
-                fetch(`/api/Student/courses/${studentId}`)
+
+                // Öğrencinin derslerini listele
+                fetch(`/api/Course/GetCoursesByClass/${studentId}`)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error("Ders listesi alınamadı.");
@@ -57,15 +55,26 @@ document.addEventListener('DOMContentLoaded', function () {
                             return;
                         }
 
-                        courses.forEach(course => {
+                        // Dersleri tabloya ekle
+                        courses.courses.forEach(course => {
                             const row = coursesTableBody.insertRow();
                             row.innerHTML = `
                                 <td>${course.courseCode || 'Kod Yok'}</td>
                                 <td>${course.courseName}</td>
                                 <td>${course.credit}</td>
-                                <td>${course.isMandatory ? 'Zorunlu' : 'Seçmeli'}</td>
+                                <td id="quota-${course.courseID}">Yükleniyor...</td>
                                 <td><input type="checkbox" name="SelectedCourses" value="${course.courseID}"></td>
                             `;
+                        });
+
+                        // Kontenjan bilgilerini al
+                        courses.courses.forEach(course => {
+                            fetch(`/api/Course/getCourseQuota/${course.courseID}`)
+                                .then(response => response.json())
+                                .then(quotaData => {
+                                    const quotaElement = document.getElementById(`quota-${course.courseID}`);
+                                    quotaElement.textContent = `${quotaData.quota - quotaData.remainingQuota} / ${quotaData.quota}`;
+                                });
                         });
                     })
                     .catch(error => console.error('Ders listesi yüklenirken hata oluştu:', error));
@@ -84,10 +93,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                     // API'ye gönderilecek veri
-                    const data = {
-                        courseID: SelectedCourses // API'nin beklediği alan ismi
-                    };
+                    const data = { courseID: SelectedCourses };
                     console.log(data);
+
                     // Ders seçimlerini API'ye gönder
                     fetch(`/api/Student/selectCourses/${studentId}`, {
                         method: 'POST',
@@ -103,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         .then(() => alert('Dersler başarıyla kaydedildi!'))
                         .catch(error => {
                             console.error('Ders seçimi sırasında hata oluştu:', error);
-                            alert('Ders seçimi sırasında bir hata oluştu.');
+                            alert('Ders seçimi sırasında bir hata oluştu:  Daha önceden ders seçimi yaptınız...');
                         });
                 });
             } else {

@@ -155,17 +155,6 @@ button, .action-button {
     transition: background-color 0.3s, transform 0.2s;
 }
 
-/* Güncelle Butonu */
-.btn-edit {
-    background-color: #004d80;
-    text-decoration: none;
-}
-
-    .btn-edit:hover {
-        color: #ffffff;
-        background-color: #003d63;
-    }
-
 /* Sil Butonu */
 .delete-button {
     background-color: #b30000;

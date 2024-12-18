@@ -12,11 +12,20 @@ namespace projebys.Models
         public int Credit { get; set; } // Kredi sayısı
         public string Department { get; set; }  // Bölüm
 
+
+        public virtual ICollection<Classes> Classes { get; set; }
+
+        public virtual ICollection<ClassCourseMappings> ClassCourseMappings { get; set; }
+
+
+        public virtual CourseQuotas CourseQuotas { get; set; }
+
         public virtual ICollection<Students> Students { get; set; }
 
         public virtual ICollection<Transcripts> Transcripts { get; set; }
 
         public virtual ICollection<StudentCourseSelections> CourseSelections { get; set; }
+
 
     }
 }

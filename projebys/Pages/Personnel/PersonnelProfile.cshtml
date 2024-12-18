@@ -30,7 +30,6 @@
             <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
             <div id="courseMenu" class="sub-menu">
                 <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
-                <span><a href="#" id="updateCourseLink">Ders Güncelle</a></span>
                 <span><a href="#" id="listCourseLink">Tüm Dersleri Listele</a></span>
             </div>
         </div>
@@ -86,7 +85,6 @@
                            document.getElementById('updateProfileLink').href = `/personnel/profile/${advisorId}`;
         document.getElementById('myStudentsLink').href = `/personnel/mystudents/${advisorId}`;
         document.getElementById('addCourseLink').href = `/personnel/courses/add/${advisorId}`;
-        document.getElementById('updateCourseLink').href = `/personnel/courses/update/${advisorId}`;
         document.getElementById('listCourseLink').href = `/personnel/courses/list/${advisorId}`;
 
                     // Profil bilgilerini doldur

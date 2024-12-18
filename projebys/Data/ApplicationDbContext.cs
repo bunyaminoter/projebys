@@ -14,6 +14,8 @@ namespace projebys.Data
         public DbSet<ClassCourseMappings> ClassCourseMappings { get; set; }  // ClassCourseMappings tablosunu ekledim
         public DbSet<Classes> Classes { get; set; } // Classes tablosunu ekledim
 
+        public DbSet<CourseQuotas> CourseQuotas { get; set; } // Yeni tablo eklendi
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,6 +43,14 @@ namespace projebys.Data
 
             // Dersler (Courses) tablosu için birincil anahtar
             modelBuilder.Entity<Courses>().HasKey(c => c.CourseID);
+
+            // Courses ve CourseQuotas arasındaki birebir ilişkiyi tanımla
+            modelBuilder.Entity<Courses>()
+                .HasOne(c => c.CourseQuotas)
+                .WithOne(q => q.Course)
+                .HasForeignKey<CourseQuotas>(q => q.CourseID)
+                .OnDelete(DeleteBehavior.Cascade); // Course silinince quota da silinsin
+
 
             // Course -> CourseSelections ilişkisi
             modelBuilder.Entity<Courses>()

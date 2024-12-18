@@ -9,6 +9,8 @@
         // Bir sınıfın birden fazla öğrencisi olabilir
         public virtual ICollection<Students> Students { get; set; }
 
+        public virtual ICollection<Courses> Courses { get; set; }
+
         public virtual ICollection<ClassCourseMappings> ClassCourseMappings { get; set; }
     }
 }

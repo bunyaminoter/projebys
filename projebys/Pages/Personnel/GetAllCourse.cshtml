@@ -30,7 +30,6 @@
                 <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
                 <div id="courseMenu" class="sub-menu">
                     <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
-                    <span><a href="#" id="updateCourseLink">Ders Güncelle</a></span>
                     <span><a href="#" id="listCourseLink">Tüm Dersleri Listele</a></span>
                 </div>
             </div>
@@ -89,6 +88,7 @@
                     } else {
                         noCoursesMessage.style.display = 'block';
                     }
+
                 })
                 .catch(error => {
                     console.error("Hata:", error);
@@ -121,13 +121,9 @@
 
                 // İşlemler butonları
                 const actions = document.createElement('td');
-                const updateButton = document.createElement('button');
+                
 
-                updateButton.textContent = 'Güncelle';
-                updateButton.onclick = function () {
-                    window.location.href = `/personnel/courses/update/${course.courseID}`; // Güncelleme sayfasına yönlendir
-                };
-
+               
                 const deleteButton = document.createElement('button');
                 deleteButton.textContent = 'Sil';
                 deleteButton.onclick = function () {
@@ -136,7 +132,6 @@
                     }
                 };
 
-                actions.appendChild(updateButton);
                 actions.appendChild(deleteButton);
                 row.appendChild(actions);
 

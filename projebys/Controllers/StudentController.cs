@@ -130,7 +130,6 @@ namespace projebys.Controllers
             return Ok(courses);
         }
 
-        // Öğrenci ders seçme
         [HttpPost("selectCourses/{id}")]
         public async Task<IActionResult> SelectedCourses(int id, [FromBody] List<int> courseids)
         {
@@ -146,17 +145,28 @@ namespace projebys.Controllers
 
             foreach (var courseId in courseids)
             {
-                Console.WriteLine(courseId); // Her bir courseId ekrana yazdırılır
                 // Dersin var olup olmadığını kontrol et
-                var course = await _context.Courses.FindAsync(courseId);
+                var course = await _context.Courses
+                    .Include(c => c.CourseQuotas)  // Kontenjan bilgisini dahil et
+                    .FirstOrDefaultAsync(c => c.CourseID == courseId);
+
                 if (course != null)
                 {
+                    // Dersin kontenjanını kontrol et
+                    if (course.CourseQuotas != null && course.CourseQuotas.RemainingQuota <= 0)
+                    {
+                        return BadRequest(new { message = $"Ders '{course.CourseName}' için kontenjan dolmuş." });
+                    }
+
                     // Ders zaten seçilmemişse, yeni bir seçim ekle
                     var existingSelection = student.CourseSelections
                         .FirstOrDefault(sc => sc.CourseID == courseId);
 
                     if (existingSelection == null)
                     {
+                        // Kontenjanı bir azalt
+                        course.CourseQuotas.RemainingQuota--;
+
                         var newSelection = new StudentCourseSelections
                         {
                             StudentID = student.StudentID,
@@ -166,13 +176,26 @@ namespace projebys.Controllers
                         };
 
                         student.CourseSelections.Add(newSelection);
+
+                        // Kontenjan değişikliğini kaydet
+                        _context.Entry(course).State = EntityState.Modified;
                     }
+                    else
+                    {
+                        // Ders zaten seçilmişse, bir uyarı gönder
+                        return BadRequest(new { message = $"Ders '{course.CourseName}' zaten seçildi." });
+                    }
+                }
+                else
+                {
+                    return NotFound(new { message = $"Ders ID '{courseId}' bulunamadı." });
                 }
             }
 
             await _context.SaveChangesAsync();
             return Ok(new { message = "Dersler başarıyla seçildi." });
         }
+
 
         [HttpGet("{studentId}")]
         public async Task<ActionResult<Students>> GetStudentInfo(int studentId)
