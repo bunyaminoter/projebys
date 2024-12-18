@@ -113,7 +113,7 @@
                         });
 
                         // Transkript verilerini API'den al ve tabloyu doldur
-                        fetch(`/api/Student/${studentId}/transcript`)
+                        fetch(`/api/Student/transcript/${studentId}`)
                             .then(response => response.json())
                             .then(transcriptData => {
                                 // Transkript tablosunu dolduruyoruz
@@ -121,10 +121,9 @@
                                 transcriptData.courses.forEach(course => {
                                     const row = transcriptTable.insertRow();
                                     row.innerHTML = `
-                                        <td>${course.courseName}</td>
-                                        <td>${course.year}</td>
-                                        <td>${course.semester}</td>
-                                        <td>${course.grade}</td>
+                                        <td>${course.CourseName}</td>
+                                         <td>${course.Credit}</td>
+                                        <td>${course.Grade}</td>
                                     `;
                                 });
                             })

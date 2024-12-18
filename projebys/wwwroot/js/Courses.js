@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <td>${course.courseName}</td>
                                 <td>${course.credit}</td>
                                 <td>${course.isMandatory ? 'Zorunlu' : 'Seçmeli'}</td>
-                                <td><input type="checkbox" name="selectedCourses" value="${course.id}"></td>
+                                <td><input type="checkbox" name="SelectedCourses" value="${course.courseID}"></td>
                             `;
                         });
                     })
@@ -75,19 +75,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     event.preventDefault();
 
                     // Seçilen derslerin ID'lerini topla
-                    const selectedCourses = Array.from(document.querySelectorAll('input[name="selectedCourses"]:checked'))
-                        .map(input => input.value);
+                    const SelectedCourses = Array.from(document.querySelectorAll('input[name="SelectedCourses"]:checked'))
+                        .map(input => parseInt(input.value, 10));
 
-                    if (selectedCourses.length === 0) {
+                    if (SelectedCourses.length === 0) {
                         alert("Lütfen en az bir ders seçin.");
                         return;
                     }
 
+                    // API'ye gönderilecek veri
+                    const data = {
+                        courseID: SelectedCourses // API'nin beklediği alan ismi
+                    };
+                    console.log(data);
                     // Ders seçimlerini API'ye gönder
                     fetch(`/api/Student/selectCourses/${studentId}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ courseIds: selectedCourses })
+                        body: JSON.stringify(SelectedCourses) // Düz dizi olarak gönder
                     })
                         .then(response => {
                             if (!response.ok) {

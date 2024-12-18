@@ -100,7 +100,7 @@ namespace projebys.Controllers
 
             // Öğrencinin transkriptini (seçtiği ve onaylanmış derslerini) alıyoruz
             var transcript = student.CourseSelections
-                .Where(sc => sc.IsApproved)  // Sadece onaylı dersleri alıyoruz
+                //.Where(sc => sc.IsApproved)  // Sadece onaylı dersleri alıyoruz
                 .Select(sc => new
                 {
                     sc.Course.CourseName, // Ders adı
@@ -132,7 +132,7 @@ namespace projebys.Controllers
 
         // Öğrenci ders seçme
         [HttpPost("selectCourses/{id}")]
-        public async Task<IActionResult> SelectCourses(int id, [FromBody] List<int> courseIds)
+        public async Task<IActionResult> SelectedCourses(int id, [FromBody] List<int> courseids)
         {
             // Öğrenciyi ID'ye göre bul
             var student = await _context.Students
@@ -144,8 +144,9 @@ namespace projebys.Controllers
                 return NotFound(new { message = "Öğrenci bulunamadı." });
             }
 
-            foreach (var courseId in courseIds)
+            foreach (var courseId in courseids)
             {
+                Console.WriteLine(courseId); // Her bir courseId ekrana yazdırılır
                 // Dersin var olup olmadığını kontrol et
                 var course = await _context.Courses.FindAsync(courseId);
                 if (course != null)
@@ -205,7 +206,6 @@ namespace projebys.Controllers
 
             // Öğrencinin seçtiği dersleri listele
             var courses = student.CourseSelections
-                .Where(sc => sc.IsApproved)  // Sadece onaylı dersleri al
                 .Select(sc => new
                 {
                     sc.Course.CourseName,  // Ders adı
