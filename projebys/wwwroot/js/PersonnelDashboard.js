@@ -65,6 +65,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     event.preventDefault();
                     window.location.href = `/personnel/courses/list`;
                 });
+                
+                document.getElementById('approveStudentCourseLink').addEventListener('click', function (event) {
+                    event.preventDefault();
+                    window.location.href = `/personnel/approveStudentCourse/${advisorId}`;
+                });
 
             } else {
                 console.error("Danışman bilgileri eksik veya hatalı.");

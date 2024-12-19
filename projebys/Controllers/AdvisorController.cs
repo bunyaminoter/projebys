@@ -113,6 +113,57 @@ public class AdvisorsController : ControllerBase
             return Ok(new { message = "Profil başarıyla güncellendi." });
         }
 
+
+        // Öğrencinin dersini onaylamak için API
+        [HttpPost("ApproveStudentCourse/{studentId}/{courseId}")]
+        public async Task<IActionResult> ApproveStudentCourse(int studentId, int courseId)
+        {
+            // Öğrencinin ders kaydını bul
+            var courseSelection = await _context.StudentCourseSelections
+                .FirstOrDefaultAsync(s => s.StudentID == studentId && s.CourseID == courseId);
+
+            if (courseSelection == null)
+            {
+                return NotFound("Öğrencinin dersi bulunamadı.");
+            }
+
+            // Ders zaten onaylanmış mı? Eğer onaylanmışsa, hata mesajı döneceğiz
+            if (courseSelection.IsApproved)
+            {
+                return BadRequest("Bu ders zaten onaylanmış.");
+            }
+
+            // Dersin onay durumunu güncelle
+            courseSelection.IsApproved = true;
+
+            await _context.SaveChangesAsync();
+            return NoContent(); // Başarılı
+        }
+
+
+        // API: Öğrencinin Seçtiği Dersler ve Onay Durumu
+        [HttpGet("GetStudentCourses/{studentId}")]
+        public async Task<IActionResult> GetStudentCourses(int studentId)
+        {
+            var studentCourses = await _context.StudentCourseSelections
+                .Where(s => s.StudentID == studentId)
+                .Include(s => s.Course)  // Ders bilgilerini de alıyoruz
+                .Select(s => new
+                {
+                    s.CourseID,
+                    s.Course.CourseName,
+                    s.IsApproved
+                })
+                .ToListAsync();
+
+            if (studentCourses == null || !studentCourses.Any())
+            {
+                return NotFound("Öğrencinin dersleri bulunamadı.");
+            }
+
+            return Ok(studentCourses);
+        }
+
     }
 
 }
