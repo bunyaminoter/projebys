@@ -2,10 +2,18 @@
 body {
     margin: 0;
     padding: 0;
-    display: flex;
     background-color: #003d63; /* Arka plan rengi */
     color: #ffffff;
     font-family: 'Arial', sans-serif;
+}
+
+/* Sayfa Başlığı */
+.header {
+    width: 100%;
+    background-color: #002b45; /* Arka plan rengi */
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
 }
 
 /* Sol Menü (Sidebar) */
@@ -32,29 +40,6 @@ body {
     width: 150px; /* Logonun boyutunu ihtiyaca göre ayarlayın */
     display: block;
     margin: 0 auto;
-}
-
-/* Personelin Adı */
-.personnel-info {
-    text-align: center;
-    margin-top: 10px;
-    color: #ffffff; /* Metin rengi */
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.advisor-info {
-    text-align: center;
-    margin-left: 500px;
-    margin-top: 10px;
-    color: #ffffff; /* Metin rengi */
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.advisor-name {
-    font-size: 16px;
-    margin-top: 10px;
 }
 
 /* Menü Başlıkları */
@@ -109,19 +94,6 @@ body {
     background-color: #003d63;
 }
 
-/* Form Konteyner */
-#studentFormContainer {
-    position: relative;
-    margin-left: 250px;
-    background-color: #004d80; /* Form arka plan rengi */
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-    color: #ffffff; /* Form metin rengi */
-}
-
 /* Form Elemanları */
 form div {
     margin-bottom: 15px;
@@ -155,38 +127,10 @@ button, .action-button {
     transition: background-color 0.3s, transform 0.2s;
 }
 
-/* Sil Butonu */
-.delete-button {
-    background-color: #b30000;
-}
 
-    .delete-button:hover {
-        background-color: #ff0000;
-    }
-
-/* Öğrenci Listeleme Konteyner */
-#studentsListContainer {
-    position: relative;
-    margin-left: 200px;
-    background-color: #004d80;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-    color: #ffffff;
-}
-
-    #studentsListContainer h2 {
-        color: #ffffff;
-        margin-bottom: 15px;
-        font-size: 24px;
-        font-weight: bold;
-    }
-
-/* Genel Tablo Stilleri */
 table {
-    width: 100%;
+    margin-left: 270px; /* Sidebar genişliği + 20px boşluk */
+    width: calc(100% - 290px); /* Sağdan kalan alanı dolduracak şekilde genişlet */
     border-collapse: separate;
     border-spacing: 0 10px;
     margin-top: 20px;
@@ -197,6 +141,7 @@ table {
     overflow: hidden;
 }
 
+/* Tablo Başlık ve Hücre Stilleri */
 th, td {
     border: 1px solid #ddd;
     padding: 15px;
@@ -222,3 +167,35 @@ tr:nth-child(odd) {
 tr:hover {
     background-color: #e0f7fa;
 }
+
+
+/* Öğrencinin Adı */
+.advisor-info {
+    text-align: center;
+    margin-left: 250px;
+    margin-top: 25px;
+    color: #ffffff; /* Metin rengi */
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.advisor-name {
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+
+/* Öğrenci Bilgisi Tablosu */
+.advisor-info-table {
+    margin-left: 150px; /* Sidebar ile arasındaki boşluk */
+    width: calc(100% - 290px); /* Genişliği sağ tarafa doğru uzat */
+    border-collapse: separate;
+    border-spacing: 0px;
+    margin-top: 20px;
+    background-color: #ffffff;
+    color: #003d63;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+

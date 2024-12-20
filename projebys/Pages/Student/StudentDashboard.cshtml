@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Öğrenci Dashboard</title>
     <link rel="stylesheet" href="/css/StudentDashboard.css">
+    <script src="/js/studentSharedLinks.js" defer></script>
+    <link rel="stylesheet" href="/css/Logout.css">
     <script src="/js/StudentDashboard.js"></script>
 </head>
 <body>
@@ -31,13 +33,35 @@
                 <span><a href="#" id="myCoursesLink">Derslerim</a></span>
             </div>
         </div>
+        <div class="logout-container">
+            <button id="logoutButton" class="logout-button">Çıkış Yap</button>
+        </div>
     </div>
 
     <div class="student-info">
         <h2>Hoşgeldiniz, <span id="studentName">Yükleniyor...</span></h2>
-        <p>E-posta: <span id="studentEmail">Yükleniyor...</span></p>
-        <p>Öğrenci Numarası: <span id="studentNumber">Yükleniyor...</span></p>
-        <p>Bölüm: <span id="studentDepartment">Yükleniyor...</span></p>
+        <table class="student-info-table">
+            <thead>
+                <tr>
+                    <th>Bilgi</th>
+                    <th>Değer</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>E-posta</td>
+                    <td><span id="studentEmail">Yükleniyor...</span></td>
+                </tr>
+                <tr>
+                    <td>Öğrenci Numarası</td>
+                    <td><span id="studentNumber">Yükleniyor...</span></td>
+                </tr>
+                <tr>
+                    <td>Bölüm</td>
+                    <td><span id="studentDepartment">Yükleniyor...</span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
 </body>

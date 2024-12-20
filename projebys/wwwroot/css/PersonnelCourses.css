@@ -107,19 +107,18 @@ table {
     margin-top: 20px;
     background-color: #ffffff;
     color: #003d63;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
     overflow: hidden;
 }
 
 th, td {
     border: 1px solid #ddd;
-    padding: 15px;
+    padding: 12px;
     text-align: left;
     vertical-align: middle;
 }
 
 th {
+    width: 950px;
     background-color: #004d80;
     color: #ffffff;
     font-weight: bold;

@@ -8,7 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Derslerim</title>
     <link rel="stylesheet" href="/css/MyCourses.css">
-    <script src="/js/MyCourses.js" defer></script>
+
+        <link rel="stylesheet" href="/css/Logout.css">
+    <script src="/js/MyCourses.js"></script>
+        <script src="/js/studentSharedLinks.js"></script>
 </head>
 <body>
     <div class="sidebar">
@@ -29,6 +32,9 @@
                 <span><a href="#" id="myCoursesLink">Derslerim</a></span>
             </div>
         </div>
+            <div class="logout-container">
+                <button id="logoutButton" class="logout-button">Çıkış Yap</button>
+            </div>
     </div>
 
     <div class="my-courses-container">
@@ -36,9 +42,10 @@
         <table id="myCoursesTable">
             <thead>
                 <tr>
-                    <th>Ders Kodu</th>
                     <th>Ders Adı</th>
-                    <th>Kredi</th>
+                        <th>Kredi</th>
+                    <th>Zorunlu/Seçmeli</th>
+                        <th>Onay Durumu</th>
                 </tr>
             </thead>
             <tbody>

@@ -53,13 +53,18 @@ namespace projebys.Controllers
                 return NotFound(new { message = "Ders bulunamadı." });
             }
 
-            // Dersi veritabanından siliyoruz
+            // İlişkili verileri siliyoruz (örneğin CourseQuotas tablosu)
+            var relatedQuotas = _context.CourseQuotas.Where(q => q.CourseID == courseID);
+            _context.CourseQuotas.RemoveRange(relatedQuotas);
+
+            // Dersi siliyoruz
             _context.Courses.Remove(course);
             await _context.SaveChangesAsync();
 
             // Başarılı bir şekilde silindiğinde 200 OK döndürüyoruz
             return Ok(new { success = true, message = "Ders başarıyla silindi." });
         }
+
 
         // GET: api/Courses/GetCourseById/{courseId}
         [HttpGet("GetCourseById/{courseId}")]

@@ -43,26 +43,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Öğrenci ID'sini al
                 const studentId = data.studentInfo.studentID;
 
-                // Linkleri dinamik olarak ayarla
-                document.getElementById('updateProfileLink').addEventListener('click', function (event) {
-                    event.preventDefault();
-                    window.location.href = `/students/updateProfile/${studentId}`;
-                });
-
-                document.getElementById('viewTranscriptLink').addEventListener('click', function (event) {
-                    event.preventDefault();
-                    window.location.href = `/students/transcript/${studentId}`;
-                });
-
-                document.getElementById('selectCoursesLink').addEventListener('click', function (event) {
-                    event.preventDefault();
-                    window.location.href = `/students/courses/${studentId}`;
-                });
-
-                document.getElementById('myCoursesLink').addEventListener('click', function (event) {
-                    event.preventDefault();
-                    window.location.href = `/students/MyCourses/${studentId}`;
-                });
 
                 // Form gönderme işlemi
                 document.getElementById('updateProfileForm').addEventListener('submit', function (event) {

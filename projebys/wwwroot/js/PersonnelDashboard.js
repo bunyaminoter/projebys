@@ -37,39 +37,10 @@ document.addEventListener('DOMContentLoaded', function () {
             // Data doğru geldiği durumda bilgileri sayfada göster
             if (data) {
                 document.getElementById('advisorName').textContent = data.advisorInfo.fullName;
-                document.getElementById('advisorTitle').textContent = data.advisorInfo.title;
+                document.getElementById('advisorTitle').textContent = data.advisorInfo.title || "Başlık Bilgisi Bulunamadı";
                 document.getElementById('advisorDepartment').textContent = data.advisorInfo.department || "Bölüm Bilgisi Bulunamadı";
                 document.getElementById('advisorEmail').textContent = data.email;
 
-
-                // ID'yi alın
-                const advisorId = data.advisorInfo.advisorID;
-
-                // Linkleri dinamik hale getir
-                document.getElementById('updateProfileLink').addEventListener('click', function (event) {
-                    event.preventDefault();
-                    window.location.href = `/Personnel/Profile/${advisorId}`;
-                });
-
-                document.getElementById('myStudentsLink').addEventListener('click', function (event) {
-                    event.preventDefault();
-                    window.location.href = `/Personnel/MyStudents/${advisorId}`;
-                });
-
-                document.getElementById('addCourseLink').addEventListener('click', function (event) {
-                    event.preventDefault();
-                    window.location.href = `/personnel/courses/add/${advisorId}`;
-                });
-
-                document.getElementById('listCourseLink').addEventListener('click', function (event) {
-                    event.preventDefault();
-                    window.location.href = `/personnel/courses/list`;
-                });
-                
-                document.getElementById('approveStudentCourseLink').addEventListener('click', function (event) {
-                    event.preventDefault();
-                    window.location.href = `/personnel/approveStudentCourse/${advisorId}`;
-                });
 
             } else {
                 console.error("Danışman bilgileri eksik veya hatalı.");

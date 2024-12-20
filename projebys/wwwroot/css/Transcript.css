@@ -162,7 +162,7 @@ form input {
 
 /* Genel Tablo Stilleri */
 table {
-    width: 100%;
+    width: 1000px;
     border-collapse: separate;
     border-spacing: 0 10px;
     margin-top: 20px;

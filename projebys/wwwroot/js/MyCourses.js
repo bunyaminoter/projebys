@@ -30,11 +30,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data && data.studentInfo) {
                 const studentId = data.studentInfo.studentID;
 
-                // Linkleri dinamik olarak ayarla
-                document.getElementById('updateProfileLink').href = `/students/updateProfile/${studentId}`;
-                document.getElementById('viewTranscriptLink').href = `/students/transcript/${studentId}`;
-                document.getElementById('selectCoursesLink').href = `/students/courses/${studentId}`;
-                document.getElementById('myCoursesLink').href = `/students/MyCourses/${studentId}`;
 
                 // Derslerim listesini doldur
                 fetch(`/api/Student/MyCourses/${studentId}`)
@@ -47,7 +42,8 @@ document.addEventListener('DOMContentLoaded', function () {
                            <td>${course.courseName}</td>
                              <td>${course.credit}</td>
                              <td>${course.isMandatory ? 'Zorunlu' : 'Seçmeli'}</td>
-    `;
+                             <td>${course.isApproved}</td> <!-- Onay durumu -->
+                            `;
                         });
 
                     })

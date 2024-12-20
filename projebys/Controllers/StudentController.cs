@@ -98,17 +98,21 @@ namespace projebys.Controllers
                 return NotFound(new { message = "Öğrenci bulunamadı." });
             }
 
-            // Öğrencinin transkriptini (seçtiği ve onaylanmış derslerini) alıyoruz
+            // Öğrencinin transkript bilgilerini çekiyoruz
             var transcript = student.CourseSelections
-                //.Where(sc => sc.IsApproved)  // Sadece onaylı dersleri alıyoruz
+                .Where(sc => sc.IsApproved)  // Sadece onaylı dersleri alıyoruz
                 .Select(sc => new
                 {
-                    sc.Course.CourseName, // Ders adı
-                    sc.Course.Credit     // Ders kredisi
+                    sc.Course.CourseName,  // Ders adı
+                    sc.Course.Credit,      // Ders kredisi
+                    Grade = _context.Transcripts  // Transcripts tablosundan Grade değerini çekiyoruz
+                        .Where(t => t.StudentID == id && t.CourseID == sc.Course.CourseID)
+                        .Select(t => t.Grade)  // Grade değerini alıyoruz
+                        .FirstOrDefault()      // Tek bir sonuç döndürüyoruz
                 })
                 .ToList();
 
-            // Eğer öğrenci herhangi bir ders seçmemişse veya dersler onaylanmamışsa, uygun mesaj döndürüyoruz
+            // Eğer transkript boşsa, uygun bir mesaj döndürüyoruz
             if (transcript == null || !transcript.Any())
             {
                 return NotFound(new { message = "Öğrencinin transkripti bulunamadı." });
@@ -215,7 +219,7 @@ namespace projebys.Controllers
         // Öğrencinin seçtiği dersleri getir
         [HttpGet("MyCourses/{id}")]
         public async Task<IActionResult> GetMyCourses(int id)
-        {
+        {   
             // Öğrenciyi ve ders seçimlerini al
             var student = await _context.Students
                 .Include(s => s.CourseSelections)  // Öğrencinin ders seçimlerini dahil et
@@ -234,6 +238,7 @@ namespace projebys.Controllers
                     sc.Course.CourseName,  // Ders adı
                     sc.Course.Credit,      // Kredi
                     sc.Course.IsMandatory, // Zorunlu olup olmadığı
+                    IsApproved = sc.IsApproved ? "Evet" : "Hayır"
                 })
                 .ToList();
 

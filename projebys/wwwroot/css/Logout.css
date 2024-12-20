@@ -1,0 +1,21 @@
+﻿
+.logout-container {
+    position: absolute;
+    bottom: 100px;
+    width: 120px;
+    text-align: center;
+}
+
+.logout-button {
+    background-color: #d9534f; /* Kırmızı bir renk */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+    .logout-button:hover {
+        background-color: #c9302c;
+    }

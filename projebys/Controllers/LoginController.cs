@@ -59,5 +59,15 @@ namespace projebys.Controllers
             });
         }
 
+
+        // Logout API
+        [HttpPost("Logout")]
+        public IActionResult Logout()
+        {
+            // Oturum verilerini temizle (örneğin, JWT veya session bilgilerini)
+            HttpContext.Session.Clear(); // Eğer session kullanıyorsanız
+            return Ok(new { success = true, message = "Oturum başarıyla kapatıldı." });
+        }
+
     }
 }

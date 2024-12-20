@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personel Dashboard</title>
     <link rel="stylesheet" href="/css/PersonnelDashboard.css"> <!-- CSS Bağlantısı -->
+    <link rel="stylesheet" href="/css/Logout.css">
+    <script src="/js/sharedLinks.js" defer></script>
     <script src="/js/PersonnelDashboard.js" defer></script>  <!-- JS Bağlantısı -->
 </head>
 <body>
@@ -33,17 +35,39 @@
             <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
             <div id="courseMenu" class="sub-menu">
                 <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
-                <span><a href="#" id="updateCourseLink"></a></span> <!--satırı silince çalışmıyor id hiçbir yerde kullanılmıyor ama çalışmıyor çok ilginç -->
                 <span><a href="#" id="listCourseLink">Tüm Dersleri Listele</a></span>
             </div>
         </div>
+        <div class="logout-container">
+            <button id="logoutButton" class="logout-button">Çıkış Yap</button>
+        </div>
     </div>
+
 
     <div class="advisor-info">
         <h2>Hoşgeldiniz, <span id="advisorName">Yükleniyor...</span></h2>
-        <p>Unvan: <span id="advisorTitle">Yükleniyor...</span></p>
-        <p>Bölüm: <span id="advisorDepartment">Yükleniyor...</span></p>
-        <p>E-posta: <span id="advisorEmail">Yükleniyor...</span></p>
+        <table class="advisor-info-table">
+            <thead>
+                <tr>
+                    <th>Bilgi</th>
+                    <th>Değer</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Başlık</td>
+                    <td><span id="advisorTitle">Yükleniyor...</span></td>
+                </tr>
+                <tr>
+                    <td>Bölüm</td>
+                    <td><span id="advisorDepartment">Yükleniyor...</span></td>
+                </tr>
+                <tr>
+                    <td>E-posta</td>
+                    <td><span id="advisorEmail">Yükleniyor...</span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
 </body>

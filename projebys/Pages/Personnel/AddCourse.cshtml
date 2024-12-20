@@ -8,14 +8,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ders Ekle</title>
     <link rel="stylesheet" href="/css/CourseAdd.css">
+    <link rel="stylesheet" href="/css/Logout.css">
+    <script src="/js/sharedLinks.js" defer></script>
     <script src="/js/CourseAdd.js" defer></script>
 </head>
 <body>
     <div class="sidebar">
+        <!-- Logo -->
         <div class="logo-container">
-            <img src="/img/ktu-logo.png" alt="Logo" class="logo">
+            <img src="/img/ktu-logo.png" alt="Logo" class="logo"> <!-- Logo dosyasının yolu -->
         </div>
 
+        <!-- Menü Başlangıcı -->
         <div id="menu">
             <span class="menu-item" onclick="toggleSubMenu('personnelMenu')">Personel İşlemleri</span>
             <div id="personnelMenu" class="sub-menu">
@@ -25,6 +29,7 @@
             <span class="menu-item" onclick="toggleSubMenu('studentMenu')">Danışman İşlemleri</span>
             <div id="studentMenu" class="sub-menu">
                 <span><a href="#" id="myStudentsLink">Öğrencilerim</a></span>
+                <span><a href="#" id="approveStudentCourseLink">Ders Onay</a></span>
             </div>
 
             <span class="menu-item" onclick="toggleSubMenu('courseMenu')">Ders İşlemleri</span>
@@ -32,6 +37,9 @@
                 <span><a href="#" id="addCourseLink">Ders Ekle</a></span>
                 <span><a href="#" id="listCourseLink">Tüm Dersleri Listele</a></span>
             </div>
+        </div>
+        <div class="logout-container">
+            <button id="logoutButton" class="logout-button">Çıkış Yap</button>
         </div>
     </div>
 
@@ -53,6 +61,7 @@
             </div>
             <div class="form-group">
                 <label for="IsMandatory">Zorunlu mu?</label>
+                <label for="text">"Zorunluysa kutuyu işaretleyiniz.</label>
                 <input type="hidden" name="IsMandatory" value="false" />
                 <input type="checkbox" id="IsMandatory" name="IsMandatory" value="true" />
 
@@ -73,106 +82,5 @@
             <button type="submit">Ders Ekle</button>
         </form>
     </div>
-    <script>
-
-                function toggleSubMenu(menuId) {
-            // Seçilen alt menüyü bul
-            const menu = document.getElementById(menuId);
-
-            // Tüm alt menüleri kapat
-            document.querySelectorAll('.sub-menu').forEach(subMenu => {
-                if (subMenu !== menu) {
-                    subMenu.style.display = 'none';
-                }
-            });
-
-            // Seçilen alt menüyü aç/kapa
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
-        function toggleSubMenu(menuId) {
-            const menu = document.getElementById(menuId);
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
-
-               document.addEventListener('DOMContentLoaded', function () {
-            // Kullanıcı bilgilerini yükle (örneğin advisorId için)
-            fetch('/api/Advisors/getAdvisorInfo', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Danışman bilgileri alınamadı.");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data && data.advisorInfo) {
-                        const advisorId = data.advisorInfo.advisorID;
-
-                        // Linkleri dinamik olarak ayarla
-                         document.getElementById('updateProfileLink').href = `/personnel/profile/${advisorId}`;
-        document.getElementById('myStudentsLink').href = `/personnel/mystudents/${advisorId}`;
-        document.getElementById('addCourseLink').href = `/personnel/courses/add/${advisorId}`;
-        document.getElementById('listCourseLink').href = `/personnel/courses/list`;
-
-                        // Ders ekleme formu işlemleri
-                        const courseAddForm = document.getElementById('courseAddForm');
-                        courseAddForm.addEventListener('submit', function (event) {
-                            event.preventDefault(); // Formun varsayılan gönderilmesini engelle
-
-                                    const formData = new FormData(courseAddForm);
-        const courseData = {};
-
-        // FormData içeriğini nesneye dönüştür
-        formData.forEach((value, key) => {
-            // IsMandatory alanını boolean'a dönüştür
-            if (key === "IsMandatory") {
-                courseData[key] = value === "true"; // "true" string'ini boolean'a dönüştür
-            } else {
-                courseData[key] = value;
-            }
-        });
-
-        console.log("Gönderilen JSON:", courseData); // Kontrol için logla
-
-
-
-                            // API'ye advisorId ile POST isteği gönder
-                            fetch(`/api/Course/Add`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify(courseData)
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        alert('Ders başarıyla eklendi!');
-                                        window.location.href = `/personnel/courses/list`; // Derslerim sayfasına yönlendir
-                                    } else {
-                                        alert('Ders ekleme sırasında bir hata oluştu!');
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Hata:', error);
-                                    alert('Ders eklerken bir hata oluştu.');
-                                });
-                        });
-                    } else {
-                        alert("Danışman bilgileri eksik.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Hata:", error);
-                    alert("Kullanıcı bilgileri yüklenirken bir hata oluştu.");
-                    window.location.href = '/Login/Loginuser'; // Kullanıcı giriş ekranına yönlendirme
-                });
-        });
-    </script>
-
 </body>
 </html>

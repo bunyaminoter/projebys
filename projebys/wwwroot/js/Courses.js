@@ -31,11 +31,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data && data.studentInfo) {
                 const studentId = data.studentInfo.studentID;
 
-                // Menülerdeki bağlantıları güncelle
-                document.getElementById('updateProfileLink').href = `/students/updateProfile/${studentId}`;
-                document.getElementById('viewTranscriptLink').href = `/students/transcript/${studentId}`;
-                document.getElementById('selectCoursesLink').href = `/students/courses/${studentId}`;
-                document.getElementById('myCoursesLink').href = `/students/MyCourses/${studentId}`;
 
 
                 // Öğrencinin derslerini listele
@@ -62,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <td>${course.courseCode || 'Kod Yok'}</td>
                                 <td>${course.courseName}</td>
                                 <td>${course.credit}</td>
+                                <td>${course.isMandatory ? 'Zorunlu' : 'Seçmeli'}</td>
                                 <td id="quota-${course.courseID}">Yükleniyor...</td>
                                 <td><input type="checkbox" name="SelectedCourses" value="${course.courseID}"></td>
                             `;

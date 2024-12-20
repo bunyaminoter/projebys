@@ -9,6 +9,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ders Seç</title>
     <link rel="stylesheet" href="/css/Courses.css">
+        <link rel="stylesheet" href="/css/Logout.css">
+        <script src="/js/studentSharedLinks.js" defer></script>
+
     <script src="/js/Courses.js" defer></script>
 </head>
 <body>
@@ -30,11 +33,15 @@
                 <span><a href="#" id="myCoursesLink">Derslerim</a></span>
             </div>
         </div>
+            <div class="logout-container">
+                <button id="logoutButton" class="logout-button">Çıkış Yap</button>
+            </div>
     </div>
 
     <div class="courses-container">
         <h2>Ders Seç</h2>
         <p>Aşağıdaki listeden derslerinizi seçebilirsiniz:</p>
+            <p>Sadece kendi sınıfınızın derslerini görebilirsiniz.</p>
         <form id="courseSelectionForm">
             <table id="coursesTable">
                 <thead>
@@ -42,7 +49,8 @@
                             <td>Ders Kodu</td>
                             <td>Ders Adı</td>
                             <td>Kredi</td>
-                            <td>Tür</td>
+                            <td>Zorunlu/Seçmeli</td>
+                            <td>Kontenjan</td>
                             <td>Seç</td>
                         </tr>
                 </thead>

@@ -11,7 +11,8 @@ body {
 
 .approval-container {
     position: relative;
-    margin-left: 350px;
+    margin-left: 300px;
+    margin-right: 20px;
     background-color: #004d80;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -148,14 +149,12 @@ form input {
 
 
 /* Güncelle Butonu */
-.btn-edit {
-    background-color: #004d80;
-    text-decoration: none;
+.approveButton {
+    padding: 10px 20px;
 }
 
-    .btn-edit:hover {
-        color: #ffffff;
-        background-color: #003d63;
+    .approveButton:hover {
+        color: #000000;
     }
 
 
@@ -181,6 +180,7 @@ th, td {
 }
 
 th {
+    width : 800px;
     background-color: #004d80;
     color: #ffffff;
     font-weight: bold;
